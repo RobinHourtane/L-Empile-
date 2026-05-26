@@ -62,7 +62,7 @@
     }
 
     /* ---- CATEGORY SECTION ---- */
-    .cat-section { padding: 5rem 5rem 2rem; }
+    .cat-section { padding: 5rem 5rem 4rem; }
     .cat-header { margin-bottom: 2.5rem; }
     .cat-eyebrow {
       font-family: var(--font-display); font-size: .72rem; font-weight: 700;
@@ -74,9 +74,48 @@
       font-weight: 900; text-transform: uppercase;
       color: var(--white); line-height: .95; letter-spacing: -.02em;
     }
-    .cat-divider {
-      height: 1px; background: rgba(255,255,255,.07);
-      margin: 1rem 5rem 0;
+
+    /* ---- SECTION COULEURS ---- */
+
+    /* Kebabs — noir profond (défaut) */
+    #kebabs { background: #0A0604; }
+
+    /* Extras — crème/beige clair */
+    #extras { background: var(--bg); }
+    #extras .cat-title { color: var(--text-dark); }
+    #extras .m-card {
+      background: var(--white);
+      border-color: var(--frame);
+    }
+    #extras .m-card:hover {
+      border-color: var(--icon-bg);
+      box-shadow: 0 16px 40px rgba(0,0,0,.1);
+    }
+    #extras .m-img-overlay {
+      background: linear-gradient(180deg, transparent 50%, rgba(245,232,220,.75) 100%);
+    }
+    #extras .m-name  { color: var(--text-dark); }
+    #extras .m-desc  { color: var(--subtitle); }
+    #extras .m-price { color: var(--text-dark); }
+    #extras .m-price-from { color: var(--subtitle); }
+    #extras .m-size-pill {
+      background: var(--frame); border-color: var(--icon-bg); color: var(--subtitle);
+    }
+    #extras .tag-light {
+      background: var(--frame); color: var(--subtitle); backdrop-filter: none;
+    }
+
+    /* Boissons — noir profond */
+    #boissons { background: #0A0604; }
+
+    /* Desserts — bordeaux sombre et chaud */
+    #desserts {
+      background: linear-gradient(160deg, #1C0507 0%, #280A08 100%);
+    }
+
+    /* CTA — rouge bordeaux impactant */
+    .menu-cta {
+      background: linear-gradient(135deg, #1A0507 0%, #8C1A18 50%, #1A0507 100%);
     }
 
     /* ---- CARDS GRID ---- */
@@ -168,7 +207,6 @@
     /* ---- FOOTER CTA ---- */
     .menu-cta {
       padding: 6rem 5rem; text-align: center;
-      background: linear-gradient(180deg, transparent 0%, rgba(140,26,24,.08) 50%, transparent 100%);
     }
     .menu-cta-title {
       font-family: var(--font-display);
@@ -186,7 +224,6 @@
       .menu-hero { padding: 6rem 1.5rem 3rem; }
       .cat-nav { padding: 0 1rem; top: 60px; }
       .cat-section { padding: 3rem 1.5rem 1.5rem; }
-      .cat-divider { margin: .5rem 1.5rem 0; }
       .menu-cards { grid-template-columns: 1fr; }
       .menu-cta { padding: 4rem 1.5rem; }
     }
@@ -356,8 +393,6 @@
     </div>
   </section>
 
-  <div class="cat-divider"></div>
-
   <!-- ===== EXTRAS ===== -->
   <section class="cat-section" id="extras">
     <div class="cat-header">
@@ -433,8 +468,6 @@
     </div>
   </section>
 
-  <div class="cat-divider"></div>
-
   <!-- ===== BOISSONS ===== -->
   <section class="cat-section" id="boissons">
     <div class="cat-header">
@@ -509,8 +542,6 @@
 
     </div>
   </section>
-
-  <div class="cat-divider"></div>
 
   <!-- ===== DESSERTS ===== -->
   <section class="cat-section" id="desserts">
