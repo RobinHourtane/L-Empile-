@@ -1,0 +1,262 @@
+/* ============================================
+   L'EM PILÉ — Design System
+   ============================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,700&family=Barlow:wght@300;400;500;600&display=swap');
+
+/* ---- Variables ---- */
+:root {
+  --bg:           #FAF3EB;
+  --frame:        #F2DDD0;
+  --icon-bg:      #EAC8B4;
+  --btn:          #8C1A18;
+  --btn-hover:    #A01F1D;
+  --btn-border:   #6E1412;
+  --navbar:       #F5E8DC;
+  --subtitle:     #7A5240;
+  --text-dark:    #1A0C08;
+  --text-mid:     #4A2C1A;
+  --selection:    #FAEAE0;
+  --white:        #FFFFFF;
+  --black:        #0A0604;
+
+  --font-display: 'Barlow Condensed', sans-serif;
+  --font-body:    'Barlow', sans-serif;
+
+  --radius-sm:  6px;
+  --radius-md:  12px;
+  --radius-lg:  20px;
+  --radius-xl:  32px;
+
+  --shadow-sm:  0 2px 8px rgba(0,0,0,.08);
+  --shadow-md:  0 8px 24px rgba(0,0,0,.14);
+  --shadow-lg:  0 20px 60px rgba(0,0,0,.20);
+}
+
+/* ---- Reset ---- */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text-dark);
+  overflow-x: hidden;
+}
+a { text-decoration: none; color: inherit; }
+img { max-width: 100%; display: block; }
+ul { list-style: none; }
+
+/* ---- Typography ---- */
+.display-xl {
+  font-family: var(--font-display);
+  font-size: clamp(4rem, 12vw, 11rem);
+  font-weight: 900;
+  line-height: .92;
+  letter-spacing: -.02em;
+  text-transform: uppercase;
+}
+.display-lg {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 7vw, 6rem);
+  font-weight: 800;
+  line-height: 1;
+  text-transform: uppercase;
+}
+.display-md {
+  font-family: var(--font-display);
+  font-size: clamp(1.8rem, 4vw, 3.2rem);
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.label {
+  font-family: var(--font-display);
+  font-size: .75rem;
+  font-weight: 600;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--subtitle);
+}
+
+/* ---- Buttons ---- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  padding: .85rem 2.2rem;
+  border-radius: var(--radius-xl);
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  cursor: pointer;
+  border: none;
+  transition: transform .2s ease, box-shadow .2s ease, background .2s ease;
+}
+.btn:hover { transform: translateY(-2px); }
+.btn:active { transform: translateY(0); }
+
+.btn-primary {
+  background: var(--btn);
+  color: var(--bg);
+  box-shadow: 0 4px 20px rgba(140,26,24,.35);
+  border: 2px solid var(--btn-border);
+}
+.btn-primary:hover {
+  background: var(--btn-hover);
+  box-shadow: 0 8px 32px rgba(140,26,24,.45);
+}
+
+.btn-outline {
+  background: transparent;
+  color: var(--btn);
+  border: 2px solid var(--btn);
+}
+.btn-outline:hover { background: var(--selection); }
+
+.btn-white {
+  background: var(--white);
+  color: var(--text-dark);
+  border: 2px solid rgba(255,255,255,.3);
+}
+.btn-white:hover { background: var(--bg); }
+
+.btn-ghost {
+  background: transparent;
+  color: var(--white);
+  border: 2px solid rgba(255,255,255,.4);
+}
+.btn-ghost:hover { background: rgba(255,255,255,.1); }
+
+/* ---- Navbar ---- */
+.navbar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  background: rgba(245,232,220,.92);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--frame);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2.5rem;
+  height: 68px;
+}
+.navbar .logo {
+  height: 40px;
+  width: auto;
+}
+.navbar nav {
+  display: flex;
+  gap: 2rem;
+}
+.navbar nav a {
+  font-family: var(--font-display);
+  font-size: .95rem;
+  font-weight: 600;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--text-mid);
+  transition: color .2s;
+}
+.navbar nav a:hover { color: var(--btn); }
+.navbar .cart-btn {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  background: var(--btn);
+  color: var(--bg);
+  border: none;
+  border-radius: var(--radius-xl);
+  padding: .55rem 1.4rem;
+  font-family: var(--font-display);
+  font-size: .9rem;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background .2s, transform .15s;
+}
+.navbar .cart-btn:hover { background: var(--btn-hover); transform: scale(1.03); }
+.cart-count {
+  background: var(--bg);
+  color: var(--btn);
+  border-radius: 50%;
+  width: 20px; height: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: .75rem;
+  font-weight: 800;
+}
+
+/* ---- Cards ---- */
+.card {
+  background: var(--frame);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  transition: transform .25s ease, box-shadow .25s ease;
+}
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+}
+
+/* ---- Tag / Badge ---- */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  padding: .3rem .9rem;
+  border-radius: 100px;
+  font-family: var(--font-display);
+  font-size: .78rem;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+.tag-red   { background: var(--btn); color: var(--bg); }
+.tag-light { background: var(--frame); color: var(--subtitle); }
+
+/* ---- Promo Banner ---- */
+.promo-banner {
+  background: var(--btn);
+  color: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  padding: .65rem 2rem;
+  font-family: var(--font-display);
+  font-size: .95rem;
+  font-weight: 600;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+.promo-banner a {
+  color: var(--bg);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* ---- Scrollbar ---- */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--frame); border-radius: 3px; }
+
+/* ---- Utility ---- */
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
+.text-center { text-align: center; }
+.text-white { color: var(--white); }
+
+/* ---- Global overflow fix ---- */
+html, body { overflow-x: hidden; max-width: 100%; }
+*, *::before, *::after { box-sizing: border-box; }
+
+/* ---- Navbar mobile ---- */
+@media (max-width: 768px) {
+  .navbar { padding: 0 1.2rem; height: 60px; }
+  .navbar nav { display: none; }
+  .navbar .cart-btn span:not(.cart-count) { display: none; }
+  .navbar .cart-btn { padding: .5rem .9rem; min-width: 0; }
+}

@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>L'EM PILÉ — Le Kebab Premium</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <style>
+    /* ---- Landing-page specific ---- */
+
+    .top-bar {
+      background: var(--btn);
+      color: var(--bg);
+      text-align: center;
+      padding: .55rem 1rem;
+      font-family: var(--font-display);
+      font-size: .85rem;
+      font-weight: 600;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    .top-bar a { color: var(--bg); text-decoration: underline; text-underline-offset: 3px; }
+
+    body { padding-top: 104px; }
+
+    /* ---- HERO ---- */
+    .hero {
+      min-height: 90vh;
+      background: var(--black);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      overflow: hidden;
+      position: relative;
+    }
+    .hero-content {
+      padding: 5rem 3rem 5rem 5rem;
+      z-index: 2;
+      position: relative;
+    }
+    .hero-eyebrow {
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+      margin-bottom: 1.5rem;
+    }
+    .hero-eyebrow::before {
+      content: '';
+      width: 32px; height: 2px;
+      background: var(--btn);
+    }
+    .hero-eyebrow span {
+      font-family: var(--font-display);
+      font-size: .8rem;
+      font-weight: 600;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--icon-bg);
+    }
+    .hero-title {
+      font-family: var(--font-display);
+      font-size: clamp(5rem, 10vw, 9.5rem);
+      font-weight: 900;
+      line-height: .88;
+      text-transform: uppercase;
+      color: var(--white);
+      margin-bottom: 1.5rem;
+    }
+    .hero-title .accent { color: var(--btn); display: block; }
+    .hero-subtitle {
+      font-size: 1.05rem;
+      color: rgba(255,255,255,.55);
+      max-width: 360px;
+      line-height: 1.6;
+      margin-bottom: 2.5rem;
+    }
+    .hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; }
+
+    .hero-visual {
+      position: relative;
+      height: 100%;
+      min-height: 90vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .hero-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      position: absolute;
+      inset: 0;
+      opacity: .75;
+      animation: slowZoom 12s ease-out forwards;
+    }
+    @keyframes slowZoom {
+      from { transform: scale(1.1); }
+      to   { transform: scale(1.0); }
+    }
+    .hero-img-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to right, var(--black) 0%, transparent 50%);
+    }
+    .hero-badge {
+      position: absolute;
+      bottom: 3rem; right: 3rem;
+      background: var(--btn);
+      color: var(--bg);
+      border-radius: var(--radius-xl);
+      padding: 1.2rem 1.8rem;
+      font-family: var(--font-display);
+      text-align: center;
+      z-index: 2;
+    }
+    .hero-badge strong {
+      display: block;
+      font-size: 2rem;
+      font-weight: 900;
+      line-height: 1;
+    }
+    .hero-badge span { font-size: .8rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; opacity: .85; }
+
+    /* ---- STRIP CONCEPT ---- */
+    .strip-concept {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      height: 220px;
+    }
+    .strip-item {
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+    }
+    .strip-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform .5s ease;
+    }
+    .strip-item:hover img { transform: scale(1.08); }
+    .strip-item .strip-label {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,.65), transparent 55%);
+      display: flex;
+      align-items: flex-end;
+      padding: 1rem 1.2rem;
+    }
+    .strip-item .strip-label span {
+      font-family: var(--font-display);
+      font-size: 1.05rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--white);
+      letter-spacing: .04em;
+    }
+
+    /* ---- HOW IT WORKS ---- */
+    .section { padding: 6rem 5rem; }
+    .section-header { margin-bottom: 3.5rem; }
+    .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; }
+    .step {
+      background: var(--frame);
+      border-radius: var(--radius-xl);
+      padding: 2.5rem 2rem;
+      position: relative;
+    }
+    .step-number {
+      font-family: var(--font-display);
+      font-size: 5rem;
+      font-weight: 900;
+      color: var(--icon-bg);
+      line-height: 1;
+      margin-bottom: .75rem;
+    }
+    .step h3 {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      margin-bottom: .75rem;
+    }
+    .step p { color: var(--subtitle); line-height: 1.6; font-size: .95rem; }
+
+    /* ---- MENU PREVIEW ---- */
+    .menu-section {
+      background: var(--black);
+      color: var(--white);
+      padding: 6rem 5rem;
+    }
+    .menu-section .section-header .label { color: var(--icon-bg); }
+    .menu-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+    .menu-card {
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      transition: transform .25s, border-color .25s;
+    }
+    .menu-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(255,255,255,.2);
+    }
+    .menu-card-img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+    }
+    .menu-card-body { padding: 1.5rem; }
+    .menu-card-body h3 {
+      font-family: var(--font-display);
+      font-size: 1.3rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      margin-bottom: .4rem;
+    }
+    .menu-card-body p { color: rgba(255,255,255,.5); font-size: .9rem; line-height: 1.5; margin-bottom: 1.2rem; }
+    .menu-card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .price {
+      font-family: var(--font-display);
+      font-size: 1.4rem;
+      font-weight: 800;
+    }
+    .price-from { font-size: .75rem; font-weight: 400; opacity: .5; margin-right: .25rem; }
+
+    .btn-add {
+      width: 38px; height: 38px;
+      border-radius: 50%;
+      background: var(--btn);
+      color: var(--white);
+      border: none;
+      font-size: 1.4rem;
+      line-height: 1;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform .2s, background .2s;
+    }
+    .btn-add:hover { background: var(--btn-hover); transform: scale(1.1); }
+
+    .menu-sub-label {
+      font-family: var(--font-display);
+      font-size: .75rem;
+      font-weight: 700;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--icon-bg);
+      display: block;
+      margin: 2.5rem 0 1.2rem;
+      opacity: .7;
+    }
+
+    /* ---- PROMO SECTION ---- */
+    .promo-section {
+      background: var(--btn);
+      padding: 4rem 5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 2rem;
+    }
+    .promo-section .promo-text h2 {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 5vw, 4rem);
+      font-weight: 900;
+      text-transform: uppercase;
+      color: var(--white);
+      line-height: 1;
+      margin-bottom: .5rem;
+    }
+    .promo-section .promo-text p { color: rgba(255,255,255,.7); font-size: 1rem; }
+
+    /* ---- CONCEPT SECTION ---- */
+    .concept-section {
+      padding: 7rem 5rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5rem;
+      align-items: center;
+    }
+    .concept-img-wrap {
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      aspect-ratio: 4/5;
+      position: relative;
+    }
+    .concept-img-wrap img { width: 100%; height: 100%; object-fit: cover; }
+    .concept-content .section-header { margin-bottom: 1.5rem; }
+    .concept-content p {
+      color: var(--subtitle);
+      line-height: 1.75;
+      font-size: 1rem;
+      margin-bottom: 1.2rem;
+    }
+
+    /* ---- CONTACT SECTION ---- */
+    .contact-section {
+      background: var(--bg);
+      padding: 6rem 5rem;
+    }
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: start;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .contact-info h2 {
+      font-family: var(--font-display);
+      font-size: clamp(2.4rem, 4vw, 3.6rem);
+      font-weight: 900;
+      text-transform: uppercase;
+      color: var(--black);
+      margin: 0 0 2rem;
+    }
+    .contact-info-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      margin-bottom: 1.6rem;
+    }
+    .contact-info-item .ci-icon {
+      width: 44px;
+      height: 44px;
+      background: var(--btn);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .contact-info-item .ci-icon svg { stroke: #fff; }
+    .contact-info-item .ci-label {
+      font-family: var(--font-display);
+      font-size: .7rem;
+      font-weight: 700;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--btn);
+      margin-bottom: .25rem;
+    }
+    .contact-info-item .ci-value {
+      font-family: var(--font-body);
+      font-size: 1rem;
+      color: var(--black);
+      line-height: 1.6;
+    }
+    .contact-info-item a.ci-value {
+      color: var(--btn);
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .contact-info-item a.ci-value:hover { text-decoration: underline; }
+    #contactMap {
+      width: 100%;
+      height: 420px;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: 0 12px 40px rgba(0,0,0,.14);
+    }
+    @media (max-width: 768px) {
+      .contact-grid { grid-template-columns: 1fr; }
+      .contact-section { padding: 4rem 1.5rem; }
+      #contactMap { height: 280px; }
+    }
+
+    /* ---- FOOTER ---- */
+    footer {
+      background: var(--black);
+      color: rgba(255,255,255,.55);
+      padding: 4rem 5rem 2rem;
+    }
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 3rem;
+      margin-bottom: 3rem;
+    }
+    .footer-brand .logo {
+      height: 44px;
+      margin-bottom: 1rem;
+      filter: brightness(0) invert(1);
+    }
+    .footer-brand p { font-size: .9rem; line-height: 1.6; max-width: 260px; }
+    .footer-social {
+      display: flex;
+      gap: .75rem;
+      margin-top: 1.2rem;
+    }
+    .footer-social a {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.12);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: rgba(255,255,255,.5);
+      transition: background .2s, color .2s;
+    }
+    .footer-social a:hover {
+      background: rgba(255,255,255,.16);
+      color: var(--white);
+    }
+    .footer-col h4 {
+      font-family: var(--font-display);
+      font-size: .8rem;
+      font-weight: 700;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.35);
+      margin-bottom: 1rem;
+    }
+    .footer-col ul { display: flex; flex-direction: column; gap: .5rem; }
+    .footer-col ul li a {
+      color: rgba(255,255,255,.55);
+      font-size: .92rem;
+      transition: color .2s;
+    }
+    .footer-col ul li a:hover { color: var(--white); }
+    .footer-bottom {
+      border-top: 1px solid rgba(255,255,255,.08);
+      padding-top: 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      font-size: .82rem;
+    }
+
+    /* Scroll fade-in */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity .6s ease, transform .6s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: none;
+    }
+
+    /* ---- GLOBAL MOBILE OVERFLOW FIX ---- */
+    html, body { overflow-x: hidden; max-width: 100%; }
+    *, *::before, *::after { box-sizing: border-box; }
+
+    /* ---- RESPONSIVE ---- */
+    @media (max-width: 768px) {
+      /* Contact (existing) */
+      .contact-grid { grid-template-columns: 1fr; }
+      .contact-section { padding: 4rem 1.5rem; }
+      #contactMap { height: 280px; }
+
+      /* Layout base */
+      body { padding-top: 60px; }
+
+      /* Navbar */
+      .navbar { padding: 0 1.2rem; height: 60px; }
+      .navbar nav { display: none; }
+      .navbar .cart-btn span:not(.cart-count) { display: none; }
+      .navbar .cart-btn { padding: .5rem .8rem; }
+
+      /* Hero */
+      .hero {
+        grid-template-columns: 1fr;
+        min-height: 100svh;
+        padding: 0;
+      }
+      .hero-content {
+        padding: 3rem 1.5rem 2rem;
+        order: 2;
+      }
+      .hero-visual {
+        order: 1;
+        height: 52vw;
+        min-height: 220px;
+        max-height: 320px;
+      }
+      .hero-title { font-size: clamp(2.4rem, 9vw, 3.5rem); }
+      .hero-subtitle { font-size: .95rem; }
+      .hero-actions { flex-direction: column; align-items: flex-start; gap: .75rem; }
+      .hero-badge { top: 1rem; right: 1rem; }
+
+      /* Section paddings */
+      .menu-section,
+      .drinks-section,
+      .desserts-section,
+      .menu-complete-section { padding: 3rem 1.2rem; }
+
+      .promo-section { padding: 2.5rem 1.5rem; }
+      .concept-section { padding: 3rem 1.2rem !important; }
+
+      /* Menu grid */
+      .menu-grid {
+        grid-template-columns: 1fr;
+        gap: 1.2rem;
+      }
+
+      /* Promo section */
+      .promo-section {
+        flex-direction: column;
+        text-align: center;
+        gap: 1.5rem;
+      }
+      .promo-section .promo-text h2 { font-size: 2rem; }
+
+      /* Concept section */
+      .concept-section {
+        grid-template-columns: 1fr !important;
+        gap: 2rem;
+      }
+      .concept-img-wrap { height: 260px; }
+
+      /* Section header */
+      .section-header { margin-bottom: 2rem; }
+
+      /* Footer */
+      footer { padding: 3rem 1.4rem 1.5rem; }
+      .footer-grid {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+      }
+      .footer-bottom {
+        flex-direction: column;
+        gap: .5rem;
+        text-align: center;
+        font-size: .78rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .hero-title { font-size: 2.2rem; }
+      .menu-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Promo Bar -->
+  <div class="top-bar">
+    Offre du mercredi&nbsp;: <strong>-10%</strong> sur toutes les commandes le soir —
+    <a href="commander.html">J'en profite &rarr;</a>
+  </div>
+
+  <!-- Navbar -->
+  <header class="navbar">
+    <a href="index.html">
+      <img src="Lemepile-logo-kebab.png" alt="L'EM PILÉ" class="logo">
+    </a>
+    <nav>
+      <a href="#menu">Nos menus</a>
+      <a href="commander.html">Composer</a>
+      <a href="#concept">Concept</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <button class="cart-btn" onclick="location.href='commander.html'">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0">
+        <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+      </svg>
+      Panier <span class="cart-count">0</span>
+    </button>
+  </header>
+
+  <!-- ============= HERO ============= -->
+  <section class="hero">
+    <div class="hero-content">
+      <div class="hero-eyebrow">
+        <span>Street food premium &middot; Toulon</span>
+      </div>
+      <h1 class="hero-title">
+        L'EM<br>
+        <span class="accent">PIL&Eacute;</span>
+      </h1>
+      <p class="hero-subtitle">
+        Le kebab que tu construis toi-même. Ingrédient par ingrédient. Sauce par sauce. La street food réinventée.
+      </p>
+      <div class="hero-actions">
+        <a href="commander.html" class="btn btn-primary">Compose ton kebab &rarr;</a>
+        <a href="#concept" class="btn btn-ghost">Notre concept</a>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <img src="kebaba flying.png" alt="Kebab L'EM PILÉ" class="hero-img">
+      <div class="hero-img-overlay"></div>
+      <div class="hero-badge">
+        <strong>4.9</strong>
+        <span>&#9733; Note clients</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============= INGREDIENT STRIP ============= -->
+  <div class="strip-concept">
+    <div class="strip-item">
+      <img src="lavash.png" alt="Lavaş">
+      <div class="strip-label"><span>Pains</span></div>
+    </div>
+    <div class="strip-item">
+      <img src="poule.png" alt="Viande">
+      <div class="strip-label"><span>Viandes</span></div>
+    </div>
+    <div class="strip-item">
+      <img src="Salat.png" alt="Légumes">
+      <div class="strip-label"><span>Légumes</span></div>
+    </div>
+    <div class="strip-item">
+      <img src="souses.png" alt="Sauces">
+      <div class="strip-label"><span>Sauces</span></div>
+    </div>
+  </div>
+
+  <!-- ============= HOW IT WORKS ============= -->
+  <section class="section" id="howto">
+    <div class="section-header reveal">
+      <span class="label">Comment ça marche</span>
+      <h2 class="display-md" style="margin-top:.5rem">Trois étapes.<br>Un kebab parfait.</h2>
+    </div>
+    <div class="steps">
+      <div class="step reveal">
+        <div class="step-number">01</div>
+        <h3>Choisis tes ingrédients</h3>
+        <p>Pains, viandes, légumes, sauces — chaque choix prend un écran entier. Immersif, intuitif, appétissant.</p>
+      </div>
+      <div class="step reveal" style="transition-delay:.1s">
+        <div class="step-number">02</div>
+        <h3>On prépare tout ça</h3>
+        <p>Cuisinés à la minute, ingrédients frais chaque jour. Ton kebab est unique et ça se voit.</p>
+      </div>
+      <div class="step reveal" style="transition-delay:.2s">
+        <div class="step-number">03</div>
+        <h3>Livraison ou click &amp; collect</h3>
+        <p>Livraison rapide dans ta zone ou récupère sur place. Toujours chaud, toujours parfait.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============= MENU PREVIEW ============= -->
+  <section class="menu-section" id="menu">
+    <div class="section-header reveal">
+      <span class="label" style="color:var(--icon-bg)">Nos gammes</span>
+      <h2 class="display-md text-white" style="margin-top:.5rem">Ce qu'on fait bien.</h2>
+    </div>
+
+    <!-- Kebabs -->
+    <div class="menu-grid">
+      <div class="menu-card reveal">
+        <img src="Premium döner kebab sandwich, perfectly wrapped.png" alt="Kebab L'EM PILÉ" class="menu-card-img">
+        <div class="menu-card-body">
+          <div style="margin-bottom:.6rem"><span class="tag tag-red">&#9733; Populaire</span></div>
+          <h3>Le Kebab Signature</h3>
+          <p>Compose entièrement ton kebab : pain, viande, légumes, sauces. Ton kebab, tes règles.</p>
+          <div class="menu-card-footer">
+            <div class="price"><span class="price-from">à partir de</span> 7,90&euro;</div>
+            <button class="btn-add" onclick="location.href='commander.html'">+</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="menu-card reveal" style="transition-delay:.1s">
+        <img src="Premium kebab meal set elegantly arranged on a dark slate stone board balcon.png" alt="Menu complet" class="menu-card-img">
+        <div class="menu-card-body">
+          <div style="margin-bottom:.6rem"><span class="tag tag-light">Menu</span></div>
+          <h3>Le Menu Complet</h3>
+          <p>Kebab signature + frites + boisson. Le combo parfait pour ne pas choisir.</p>
+          <div class="menu-card-footer">
+            <div class="price"><span class="price-from">à partir de</span> 12,50&euro;</div>
+            <button class="btn-add" onclick="location.href='commander.html'">+</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="menu-card reveal" style="transition-delay:.2s">
+        <img src="Salat.png" alt="Salade" class="menu-card-img">
+        <div class="menu-card-body">
+          <div style="margin-bottom:.6rem"><span class="tag tag-light">Végétarien</span></div>
+          <h3>Le Falafel Bowl</h3>
+          <p>Falafels maison, légumes frais, sauce tzatziki. La street food végé qui ne déçoit pas.</p>
+          <div class="menu-card-footer">
+            <div class="price"><span class="price-from">à partir de</span> 8,90&euro;</div>
+            <button class="btn-add" onclick="location.href='commander.html'">+</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Boissons -->
+    <span class="menu-sub-label reveal">Boissons</span>
+    <div class="menu-grid">
+      <div class="menu-card reveal">
+        <img src="Dessert or drink/Ice cold cola in a tall transparent glass with ice cubes,.png" alt="Cola" class="menu-card-img">
+        <div class="menu-card-body">
+          <div style="margin-bottom:.6rem"><span class="tag tag-light">Boisson</span></div>
+          <h3>Cola</h3>
+          <p>Bien frais, bien pétillant. Le classique indémodable.</p>
+          <div class="menu-card-footer">
+            <div class="price">2,00&euro;</div>
+            <button class="btn-add" onclick="location.href='commander.html'">+</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="menu-card reveal" style="transition-delay:.1s">
+        <img src="Fresh mint lemonade in a tall glass with ice cubes and mint sprigs.png" alt="Citronnade" class="menu-card-img">
+        <div class="menu-card-body">
+          <div style="margin-bottom:.6rem"><span class="tag tag-light">Boisson</span></div>
+          <h3>Citronnade menthe</h3>
+          <p>Citron pressé, menthe fraîche, glaçons. Fraîcheur garantie, faite maison.</p>
+          <div class="menu-card-footer">
+            <div class="price">2,50&euro;</div>
+            <button class="btn-add" onclick="location.href='commander.html'">+</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="menu-card reveal" style="transition-delay:.2s">
+        <img src="Traditional Turkish tea in a classic tulip shaped glass on a small saucer.png" alt="Thé turc" class="menu-card-img">
+        <div class="menu-card-body">
+          <div style="margin-bottom:.6rem"><span class="tag tag-light">Boisson</span></div>
+          <h3>Thé turc</h3>
+          <p>Thé noir fort servi dans le verre tulipe traditionnel. L'authenticité dans chaque gorgée.</p>
+          <div class="menu-card-footer">
+            <div class="price">1,50&euro;</div>
+            <button class="btn-add" onclick="location.href='commander.html'">+</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Desserts -->
+    <span class="menu-sub-label reveal">Desserts</span>
+    <div class="menu-grid">
+      <div class="menu-card reveal">
+        <img src="Dessert or drink/Three scoops of premium vanilla ice cream in a tall elegant crystal cut glass bowl on a stem,.png" alt="Glace vanille" class="menu-card-img">
+        <div class="menu-card-body">
+          <div style="margin-bottom:.6rem"><span class="tag tag-red">Dessert</span></div>
+          <h3>Glace vanille</h3>
+          <p>3 boules de crème glacée vanille dans un verre de cristal taillé. Pour finir en beauté.</p>
+          <div class="menu-card-footer">
+            <div class="price">3,50&euro;</div>
+            <button class="btn-add" onclick="location.href='commander.html'">+</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="menu-card reveal" style="transition-delay:.1s">
+        <img src="Fresh falafel bowl served in a tall elegant crystal cut glass bowl on a stem.png" alt="Salade falafels" class="menu-card-img">
+        <div class="menu-card-body">
+          <div style="margin-bottom:.6rem"><span class="tag tag-red">Dessert</span></div>
+          <h3>Salade falafels</h3>
+          <p>Falafels croustillants sur lit de salade fraîche, sauce tzatziki. Léger et gourmand.</p>
+          <div class="menu-card-footer">
+            <div class="price">4,00&euro;</div>
+            <button class="btn-add" onclick="location.href='commander.html'">+</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="menu-card reveal" style="transition-delay:.2s">
+        <img src="Fresh Greek salad elegantly arranged on a wide flat white ceramic plate.png" alt="Salade grecque" class="menu-card-img">
+        <div class="menu-card-body">
+          <div style="margin-bottom:.6rem"><span class="tag tag-red">Dessert</span></div>
+          <h3>Salade grecque</h3>
+          <p>Tomates, concombres, olives, feta, huile d'olive. La Méditerranée dans ton assiette.</p>
+          <div class="menu-card-footer">
+            <div class="price">4,50&euro;</div>
+            <button class="btn-add" onclick="location.href='commander.html'">+</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="text-align:center; margin-top:3rem">
+      <a href="commander.html" class="btn btn-white">Composer mon kebab &rarr;</a>
+    </div>
+  </section>
+
+  <!-- ============= PROMO ============= -->
+  <section class="promo-section">
+    <div class="promo-text reveal">
+      <h2>-10% le mercredi soir</h2>
+      <p>Toutes les commandes passées entre 18h et 22h le mercredi bénéficient de 10% de réduction.</p>
+    </div>
+    <a href="commander.html" class="btn btn-white reveal" style="flex-shrink:0">J'en profite &rarr;</a>
+  </section>
+
+  <!-- ============= CONCEPT ============= -->
+  <section class="concept-section" id="concept">
+    <div class="concept-img-wrap reveal">
+      <img src="kebab reference1.png" alt="Notre concept">
+    </div>
+    <div class="concept-content">
+      <div class="section-header reveal">
+        <span class="label">Notre concept</span>
+        <h2 class="display-md" style="margin-top:.5rem">La street food comme elle devrait être.</h2>
+      </div>
+      <p class="reveal">L'EM PILÉ, c'est l'idée simple que le kebab mérite mieux que le bas de gamme. Des ingrédients frais, une expérience de commande digne d'une grande marque, et un résultat qui te surprend à chaque bouchée.</p>
+      <p class="reveal">Chaque détail compte — du choix du pain jusqu'à l'emballage final. Et toi, tu choisis tout.</p>
+      <a href="commander.html" class="btn btn-primary reveal" style="margin-top:1rem">Compose ton kebab &rarr;</a>
+    </div>
+  </section>
+
+  <!-- ============= CONTACT ============= -->
+  <section class="contact-section" id="contact">
+    <div class="contact-grid">
+      <div class="contact-info">
+        <div class="section-header reveal">
+          <span class="label" style="color:var(--btn)">Nous trouver</span>
+          <h2 class="reveal" style="margin-top:.5rem">Viens nous voir.</h2>
+        </div>
+
+        <!-- Phone -->
+        <div class="contact-info-item reveal">
+          <div class="ci-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.6 3.18 2 2 0 0 1 3.59 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.56a16 16 0 0 0 6.07 6.07l.97-.97a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
+            </svg>
+          </div>
+          <div>
+            <div class="ci-label">Téléphone</div>
+            <a href="tel:+33494000000" class="ci-value">04 94 00 00 00</a>
+          </div>
+        </div>
+
+        <!-- Address -->
+        <div class="contact-info-item reveal">
+          <div class="ci-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+              <circle cx="12" cy="10" r="3"/>
+            </svg>
+          </div>
+          <div>
+            <div class="ci-label">Adresse</div>
+            <div class="ci-value">Place de la Liberté, 83000 Toulon<br>À 2 min du parking Besagne</div>
+          </div>
+        </div>
+
+        <!-- Hours -->
+        <div class="contact-info-item reveal">
+          <div class="ci-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <polyline points="12 6 12 12 16 14"/>
+            </svg>
+          </div>
+          <div>
+            <div class="ci-label">Horaires</div>
+            <div class="ci-value">
+              Lun&ndash;Ven &nbsp;: 11h00&ndash;23h00<br>
+              Samedi &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: 11h00&ndash;00h00<br>
+              Dimanche &nbsp;: 12h00&ndash;22h00
+            </div>
+          </div>
+        </div>
+
+        <!-- Delivery zone -->
+        <div class="contact-info-item reveal">
+          <div class="ci-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="1" y="3" width="15" height="13" rx="1"/>
+              <path d="M16 8h4l3 3v5h-7V8z"/>
+              <circle cx="5.5" cy="18.5" r="2.5"/>
+              <circle cx="18.5" cy="18.5" r="2.5"/>
+            </svg>
+          </div>
+          <div>
+            <div class="ci-label">Zone de livraison</div>
+            <div class="ci-value">Rayon de 5 km autour du restaurant.<br>Click &amp; Collect disponible sans restriction.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Map -->
+      <div class="reveal" style="transition-delay:.15s">
+        <div id="contactMap"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============= FOOTER ============= -->
+  <footer>
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <img src="Lemepile-logo-kebab.png" alt="L'EM PILÉ" class="logo">
+        <p>La street food réinventée. Un kebab premium, composé par toi, livré chez toi.</p>
+        <div class="footer-social">
+          <!-- Instagram -->
+          <a href="#" title="Instagram">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+              <circle cx="12" cy="12" r="4"/>
+              <circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none"/>
+            </svg>
+          </a>
+          <!-- TikTok -->
+          <a href="#" title="TikTok">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V9.27a8.28 8.28 0 004.84 1.55V7.38a4.85 4.85 0 01-1.07-.69z"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Commander</h4>
+        <ul>
+          <li><a href="commander.html">Composer mon kebab</a></li>
+          <li><a href="#menu">Nos menus</a></li>
+          <li><a href="#menu">Boissons</a></li>
+          <li><a href="#menu">Desserts</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Infos</h4>
+        <ul>
+          <li><a href="#concept">Notre concept</a></li>
+          <li><a href="#">Zone de livraison</a></li>
+          <li><a href="#">Horaires</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Horaires</h4>
+        <ul>
+          <li><a href="#">Lun&ndash;Ven&nbsp;: 11h&ndash;23h</a></li>
+          <li><a href="#">Sam&nbsp;: 11h&ndash;00h</a></li>
+          <li><a href="#">Dim&nbsp;: 12h&ndash;22h</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; 2025 L'EM PIL&Eacute;. Tous droits réservés.</span>
+      <span>Mentions légales &middot; CGV &middot; Politique de confidentialité</span>
+    </div>
+  </footer>
+
+  <script>
+    /* ---- Reveal on scroll ---- */
+    const reveals = document.querySelectorAll('.reveal');
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) e.target.classList.add('visible');
+      });
+    }, { threshold: 0.12 });
+    reveals.forEach(el => revealObserver.observe(el));
+
+    /* ---- Contact Leaflet map ---- */
+    (function initContactMap() {
+      const RESTAURANT = { lat: 43.1252, lng: 5.9275 };
+      const map = L.map('contactMap', {
+        zoomControl: true,
+        scrollWheelZoom: false,
+        dragging: !L.Browser.mobile
+      }).setView([RESTAURANT.lat, RESTAURANT.lng], 15);
+
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+        maxZoom: 18
+      }).addTo(map);
+
+      // Delivery zone circle
+      L.circle([RESTAURANT.lat, RESTAURANT.lng], {
+        radius: 5000,
+        color: '#8C1A18',
+        fillColor: '#8C1A18',
+        fillOpacity: 0.08,
+        weight: 2,
+        dashArray: '6,4'
+      }).addTo(map);
+
+      // Restaurant marker
+      const icon = L.divIcon({
+        html: `<div style="width:44px;height:44px;background:#8C1A18;border-radius:50%;border:3px solid #fff;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(140,26,24,.45)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>`,
+        className: '', iconSize: [44, 44], iconAnchor: [22, 22]
+      });
+      L.marker([RESTAURANT.lat, RESTAURANT.lng], { icon })
+        .addTo(map)
+        .bindPopup("<strong>L'EM PILÉ</strong><br>Place de la Liberté, Toulon")
+        .openPopup();
+    })();
+  </script>
+
+</body>
+</html>
