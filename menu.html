@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>La Carte — L'EM PILÉ</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+
+    body { background: #0A0604; color: var(--white); }
+
+    /* ---- HERO ---- */
+    .menu-hero {
+      padding: 8rem 5rem 4rem;
+      background: linear-gradient(160deg, #1A0C08 0%, #0A0604 65%);
+      position: relative; overflow: hidden;
+    }
+    .menu-hero::before {
+      content: '';
+      position: absolute; top: -40%; right: -8%;
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(140,26,24,.18) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .menu-hero-eyebrow {
+      font-family: var(--font-display); font-size: .78rem; font-weight: 700;
+      letter-spacing: .18em; text-transform: uppercase;
+      color: var(--btn); margin-bottom: 1rem;
+    }
+    .menu-hero-title {
+      font-family: var(--font-display);
+      font-size: clamp(3.5rem, 10vw, 7rem);
+      font-weight: 900; text-transform: uppercase;
+      color: var(--white); line-height: .9;
+      letter-spacing: -.03em; margin-bottom: 1.2rem;
+    }
+    .menu-hero-title span { color: var(--btn); }
+    .menu-hero-sub {
+      font-family: var(--font-body); font-size: 1.05rem;
+      color: rgba(255,255,255,.5); max-width: 480px;
+    }
+
+    /* ---- CAT NAV STICKY ---- */
+    .cat-nav {
+      position: sticky; top: 68px; z-index: 90;
+      background: rgba(10,6,4,.92); backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      display: flex; padding: 0 5rem;
+      overflow-x: auto;
+    }
+    .cat-nav::-webkit-scrollbar { display: none; }
+    .cat-nav-item {
+      font-family: var(--font-display); font-size: .82rem;
+      font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+      color: rgba(255,255,255,.4); padding: 1.1rem 1.6rem;
+      border-bottom: 2px solid transparent;
+      text-decoration: none; white-space: nowrap;
+      transition: color .2s, border-color .2s;
+    }
+    .cat-nav-item:hover, .cat-nav-item.active {
+      color: var(--white); border-bottom-color: var(--btn);
+    }
+
+    /* ---- CATEGORY SECTION ---- */
+    .cat-section { padding: 5rem 5rem 4rem; }
+    .cat-header { margin-bottom: 2.5rem; }
+    .cat-eyebrow {
+      font-family: var(--font-display); font-size: .72rem; font-weight: 700;
+      letter-spacing: .18em; text-transform: uppercase;
+      color: var(--btn); margin-bottom: .5rem;
+    }
+    .cat-title {
+      font-family: var(--font-display); font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 900; text-transform: uppercase;
+      color: var(--white); line-height: .95; letter-spacing: -.02em;
+    }
+
+    /* ---- SECTION COULEURS ---- */
+
+    /* Kebabs — noir profond (défaut) */
+    #kebabs { background: #0A0604; }
+
+    /* Extras — crème/beige clair */
+    #extras { background: var(--bg); }
+    #extras .cat-title { color: var(--text-dark); }
+    #extras .m-card {
+      background: var(--white);
+      border-color: var(--frame);
+    }
+    #extras .m-card:hover {
+      border-color: var(--icon-bg);
+      box-shadow: 0 16px 40px rgba(0,0,0,.1);
+    }
+    #extras .m-img-overlay {
+      background: linear-gradient(180deg, transparent 50%, rgba(245,232,220,.75) 100%);
+    }
+    #extras .m-name  { color: var(--text-dark); }
+    #extras .m-desc  { color: var(--subtitle); }
+    #extras .m-price { color: var(--text-dark); }
+    #extras .m-price-from { color: var(--subtitle); }
+    #extras .m-size-pill {
+      background: var(--frame); border-color: var(--icon-bg); color: var(--subtitle);
+    }
+    #extras .tag-light {
+      background: var(--frame); color: var(--subtitle); backdrop-filter: none;
+    }
+
+    /* Boissons — noir profond */
+    #boissons { background: #0A0604; }
+
+    /* Desserts — bordeaux sombre et chaud */
+    #desserts {
+      background: linear-gradient(160deg, #1C0507 0%, #280A08 100%);
+    }
+
+    /* CTA — rouge bordeaux impactant */
+    .menu-cta {
+      background: linear-gradient(135deg, #1A0507 0%, #8C1A18 50%, #1A0507 100%);
+    }
+
+    /* ---- CARDS GRID ---- */
+    .menu-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+    .m-card {
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.09);
+      border-radius: var(--radius-lg); overflow: hidden;
+      display: flex; flex-direction: column;
+      transition: transform .25s, border-color .25s, box-shadow .25s;
+    }
+    .m-card:hover {
+      transform: translateY(-5px);
+      border-color: rgba(255,255,255,.18);
+      box-shadow: 0 16px 40px rgba(0,0,0,.4);
+    }
+    .m-img-wrap { position: relative; overflow: hidden; }
+    .m-img {
+      width: 100%; height: 220px; object-fit: cover; display: block;
+      transition: transform .4s ease;
+    }
+    .m-card:hover .m-img { transform: scale(1.04); }
+    .m-img-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(180deg, transparent 50%, rgba(10,6,4,.65) 100%);
+    }
+    .m-tags {
+      position: absolute; top: .75rem; left: .75rem;
+      display: flex; gap: .4rem; flex-wrap: wrap;
+    }
+    .m-tag {
+      font-family: var(--font-display); font-size: .6rem;
+      font-weight: 800; letter-spacing: .1em; text-transform: uppercase;
+      padding: .22rem .6rem; border-radius: var(--radius-xl);
+    }
+    .tag-red   { background: var(--btn); color: var(--white); }
+    .tag-gold  { background: #F2C94C; color: #1A0C08; }
+    .tag-green { background: #27AE60; color: var(--white); }
+    .tag-light { background: rgba(255,255,255,.15); color: var(--white); backdrop-filter: blur(8px); }
+
+    .m-body { padding: 1.4rem 1.5rem 1.5rem; display: flex; flex-direction: column; flex: 1; }
+    .m-name {
+      font-family: var(--font-display); font-size: 1.2rem;
+      font-weight: 800; text-transform: uppercase;
+      color: var(--white); margin-bottom: .4rem;
+    }
+    .m-desc {
+      font-family: var(--font-body); font-size: .85rem;
+      color: rgba(255,255,255,.5); line-height: 1.5;
+      flex: 1; margin-bottom: 1.2rem;
+    }
+    .m-footer {
+      display: flex; align-items: center;
+      justify-content: space-between; gap: 1rem;
+    }
+    .m-price {
+      font-family: var(--font-display); font-size: 1.4rem;
+      font-weight: 900; color: var(--white); line-height: 1;
+    }
+    .m-price-from {
+      display: block; font-family: var(--font-body);
+      font-size: .68rem; color: rgba(255,255,255,.4);
+      font-weight: 400; margin-bottom: .1rem;
+    }
+    .m-sizes { display: flex; gap: .4rem; margin-top: .35rem; flex-wrap: wrap; }
+    .m-size-pill {
+      font-family: var(--font-display); font-size: .62rem; font-weight: 700;
+      color: rgba(255,255,255,.5);
+      background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.12);
+      border-radius: var(--radius-xl); padding: .15rem .5rem;
+    }
+    .m-btn {
+      display: inline-flex; align-items: center; gap: .45rem;
+      background: var(--btn); color: var(--white);
+      border: none; border-radius: var(--radius-xl);
+      padding: .65rem 1.3rem;
+      font-family: var(--font-display); font-size: .8rem;
+      font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
+      cursor: pointer; text-decoration: none;
+      transition: background .2s, transform .15s;
+      white-space: nowrap; flex-shrink: 0;
+    }
+    .m-btn:hover { background: var(--btn-hover); transform: scale(1.04); }
+
+    /* ---- FOOTER CTA ---- */
+    .menu-cta {
+      padding: 6rem 5rem; text-align: center;
+    }
+    .menu-cta-title {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 900; text-transform: uppercase;
+      color: var(--white); margin-bottom: 1rem; line-height: 1;
+    }
+    .menu-cta-sub {
+      font-family: var(--font-body); color: rgba(255,255,255,.45);
+      margin-bottom: 2rem; font-size: 1rem;
+    }
+
+    /* ---- RESPONSIVE ---- */
+    @media (max-width: 768px) {
+      .menu-hero { padding: 6rem 1.5rem 3rem; }
+      .cat-nav { padding: 0 1rem; top: 60px; }
+      .cat-section { padding: 3rem 1.5rem 1.5rem; }
+      .menu-cards { grid-template-columns: 1fr; }
+      .menu-cta { padding: 4rem 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===== NAVBAR ===== -->
+  <header class="navbar">
+    <a href="accueil.html">
+      <img src="Lemepile-logo-kebab.png" alt="L'EM PILÉ" class="logo">
+    </a>
+    <nav>
+      <a href="menu.html" style="color:var(--btn)">La Carte</a>
+      <a href="commander.html">Composer</a>
+      <a href="accueil.html#concept">Concept</a>
+      <a href="accueil.html#contact">Contact</a>
+    </nav>
+    <button class="cart-btn" onclick="location.href='panier.html'">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0">
+        <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+      </svg>
+      Panier <span class="cart-count">0</span>
+    </button>
+  </header>
+
+  <!-- ===== HERO ===== -->
+  <section class="menu-hero">
+    <div class="menu-hero-eyebrow">L'EM PILÉ · Street Food Premium · Toulon</div>
+    <h1 class="menu-hero-title">La<br><span>Carte</span></h1>
+    <p class="menu-hero-sub">Des ingrédients frais, des recettes qui claquent. Choisis ce qui te fait envie, on s'occupe du reste.</p>
+  </section>
+
+  <!-- ===== NAV CATÉGORIES ===== -->
+  <nav class="cat-nav">
+    <a href="#kebabs"   class="cat-nav-item active">Kebabs</a>
+    <a href="#extras"   class="cat-nav-item">Extras</a>
+    <a href="#boissons" class="cat-nav-item">Boissons</a>
+    <a href="#desserts" class="cat-nav-item">Desserts</a>
+  </nav>
+
+  <!-- ===== KEBABS ===== -->
+  <section class="cat-section" id="kebabs">
+    <div class="cat-header">
+      <div class="cat-eyebrow">Nos spécialités</div>
+      <h2 class="cat-title">Kebabs</h2>
+    </div>
+    <div class="menu-cards">
+
+      <div class="m-card">
+        <div class="m-img-wrap">
+          <img class="m-img" src="Premium döner kebab sandwich, perfectly wrapped.png" alt="Le Kebab Signature">
+          <div class="m-img-overlay"></div>
+          <div class="m-tags"><span class="m-tag tag-gold">★ Populaire</span></div>
+        </div>
+        <div class="m-body">
+          <div class="m-name">Le Kebab Signature</div>
+          <p class="m-desc">Compose entièrement ton kebab : pain, viande, légumes, sauces. Ton kebab, tes règles — à chaque fois unique.</p>
+          <div class="m-footer">
+            <div class="m-price">
+              <span class="m-price-from">à partir de</span>
+              6,90 €
+              <div class="m-sizes">
+                <span class="m-size-pill">S · 6,90€</span>
+                <span class="m-size-pill">M · 7,90€</span>
+                <span class="m-size-pill">L · 9,90€</span>
+              </div>
+            </div>
+            <a href="commander.html" class="m-btn">Commander →</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="m-card">
+        <div class="m-img-wrap">
+          <img class="m-img" src="Premium kebab meal set elegantly arranged on a dark slate stone board balcon.png" alt="Le Menu Complet">
+          <div class="m-img-overlay"></div>
+          <div class="m-tags"><span class="m-tag tag-light">Menu</span></div>
+        </div>
+        <div class="m-body">
+          <div class="m-name">Le Menu Complet</div>
+          <p class="m-desc">Kebab Signature + frites maison + boisson. Le combo parfait quand tu veux pas choisir.</p>
+          <div class="m-footer">
+            <div class="m-price">
+              <span class="m-price-from">à partir de</span>
+              12,50 €
+            </div>
+            <a href="commander.html" class="m-btn">Commander →</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="m-card">
+        <div class="m-img-wrap">
+          <img class="m-img" src="Fresh falafel bowl served in a tall elegant crystal cut glass bowl on a stem.png" alt="Le Falafel Bowl">
+          <div class="m-img-overlay"></div>
+          <div class="m-tags"><span class="m-tag tag-green">Végétarien</span></div>
+        </div>
+        <div class="m-body">
+          <div class="m-name">Le Falafel Bowl</div>
+          <p class="m-desc">Falafels maison croustillants, légumes frais de saison, sauce tzatziki. La street food végé qui ne déçoit pas.</p>
+          <div class="m-footer">
+            <div class="m-price">
+              <span class="m-price-from">à partir de</span>
+              8,90 €
+            </div>
+            <a href="commander.html" class="m-btn">Commander →</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="m-card">
+        <div class="m-img-wrap">
+          <img class="m-img" src="Secondary choose  ingredient/Grilled lamb kebab.png" alt="L'Agneau">
+          <div class="m-img-overlay"></div>
+          <div class="m-tags"><span class="m-tag tag-light">Spécialité</span></div>
+        </div>
+        <div class="m-body">
+          <div class="m-name">L'Agneau</div>
+          <p class="m-desc">Brochettes d'agneau marinées au cumin et aux épices orientales. La star des connaisseurs.</p>
+          <div class="m-footer">
+            <div class="m-price">
+              <span class="m-price-from">à partir de</span>
+              9,90 €
+            </div>
+            <a href="commander.html" class="m-btn">Commander →</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="m-card">
+        <div class="m-img-wrap">
+          <img class="m-img" src="Durum.png" alt="Le Dürum">
+          <div class="m-img-overlay"></div>
+          <div class="m-tags"><span class="m-tag tag-red">Nouveau</span></div>
+        </div>
+        <div class="m-body">
+          <div class="m-name">Le Dürum</div>
+          <p class="m-desc">Roulé serré dans un pain fin & croustillant. Le format idéal pour manger sur le pouce sans te salir.</p>
+          <div class="m-footer">
+            <div class="m-price">
+              <span class="m-price-from">à partir de</span>
+              7,50 €
+            </div>
+            <a href="commander.html" class="m-btn">Commander →</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="m-card">
+        <div class="m-img-wrap">
+          <img class="m-img" src="Red lentil soup.png" alt="Soupe Lentilles">
+          <div class="m-img-overlay"></div>
+          <div class="m-tags"><span class="m-tag tag-green">Végétarien</span></div>
+        </div>
+        <div class="m-body">
+          <div class="m-name">Soupe Lentilles</div>
+          <p class="m-desc">Soupe de lentilles rouges mijotée aux épices douces. Réconfortante, généreuse et authentique.</p>
+          <div class="m-footer">
+            <div class="m-price">5,90 €</div>
+            <a href="commander.html" class="m-btn">Commander →</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===== EXTRAS ===== -->
+  <section class="cat-section" id="extras">
+    <div class="cat-header">
+      <div class="cat-eyebrow">Pour compléter</div>
+      <h2 class="cat-title">Extras</h2>
+    </div>
+    <div class="menu-cards">
+
+      <div class="m-card">
+        <div class="m-img-wrap">
+          <img class="m-img" src="Crispy thin cut golden french fries .png" alt="Frites Maison">
+          <div class="m-img-overlay"></div>
+          <div class="m-tags"><span class="m-tag tag-gold">★ Incontournable</span></div>
+        </div>
+        <div class="m-body">
+          <div class="m-name">Frites Maison</div>
+          <p class="m-desc">Croustillantes & dorées, coupées épaisses. La valeur sûre qui accompagne tout.</p>
+          <div class="m-footer">
+            <div class="m-price">2,00 €</div>
+            <a href="commander.html" class="m-btn">Commander →</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="m-card">
+        <div class="m-img-wrap">
+          <img class="m-img" src="Crispy rustic potato wedges.png" alt="Potatoes">
+          <div class="m-img-overlay"></div>
+          <div class="m-tags"><span class="m-tag tag-light">Épicé</span></div>
+        </div>
+        <div class="m-body">
+          <div class="m-name">Potatoes</div>
+          <p class="m-desc">Grosses wedges épicées cuites au four. Pour ceux qui veulent plus que des frites classiques.</p>
+          <div class="m-footer">
+            <div class="m-price">2,50 €</div>
+            <a href="commander.html" class="m-btn">Commander →</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="m-card">
+        <div class="m-img-wrap">
+          <img class="m-img" src="Fresh falafel bowl served in a tall elegant crystal cut glass bowl on a stem.png" alt="Falafels">
+          <div class="m-img-overlay"></div>
+          <div class="m-tags"><span class="m-tag tag-green">Végétarien</span></div>
+        </div>
+        <div class="m-body">
+          <div class="m-name">Falafels</div>
+          <p class="m-desc">Boulettes végétales aux herbes & épices orientales, croustillantes dehors, moelleuses dedans.</p>
+          <div class="m-footer">
+            <div class="m-price">3,50 €</div>
+            <a href="commander.html" class="m-btn">Commander →</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="m-card">
+        <div class="m-img-wrap">
+          <img class="m-img" src="Secondary choose  ingredient/Sliced pickled gherkins.png" alt="Cornichons">
+          <div class="m-img-overlay"></div>
+          <div class="m-tags"><span class="m-tag tag-light">Accompagnement</span></div>
+        </div>
+        <div class="m-body">
+          <div class="m-name">Cornichons</div>
+          <p class="m-desc">Rondelles de cornichons aigre-doux, croquantes et bien parfumées. Le petit plus qui change tout.</p>
+          <div class="m-footer">
+            <div class="m-price">0,50 €</div>
+            <a href="commander.html" class="m-btn">Commander →</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===== BOISSONS ===== -->
+  <section class="cat-section" id="boissons">
+    <div class="cat-header">
+      <div class="cat-eyebrow">Pour se désaltérer</div>
+      <h2 class="cat-title">Boissons</h2>
+    </div>
+    <div class="menu-cards">
+
+      <div class="m-card">
+        <div class="m-img-wrap">
+          <img class="m-img" src="Dessert or drink/Ice cold cola in a tall transparent glass with ice cubes,.png" alt="Cola">
+          <div class="m-img-overlay"></div>
+          <div class="m-tags"><span class="m-tag tag-light">Boisson</span></div>
+        </div>
+        <div class="m-body">
+          <div class="m-name">Cola</div>
+          <p class="m-desc">Bien frais, bien pétillant. Le classique indémodable qui accompagne tous les plats.</p>
+          <div class="m-footer">
+            <div class="m-price">2,00 €</div>
+            <a href="commander.html" class="m-btn">Commander →</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="m-card">
+        <div class="m-img-wrap">
+          <img class="m-img" src="Dessert or drink/Fresh lemonade in a tall glass with ice, lemon slice on rim,.png" alt="Limonade">
+          <div class="m-img-overlay"></div>
+          <div class="m-tags"><span class="m-tag tag-light">Boisson</span></div>
+        </div>
+        <div class="m-body">
+          <div class="m-name">Limonade</div>
+          <p class="m-desc">Fraîche & pétillante, acidulée juste ce qu'il faut. Parfaite pour rafraîchir le palais.</p>
+          <div class="m-footer">
+            <div class="m-price">2,50 €</div>
+            <a href="commander.html" class="m-btn">Commander →</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="m-card">
+        <div class="m-img-wrap">
+          <img class="m-img" src="Fresh mint lemonade in a tall glass with ice cubes and mint sprigs.png" alt="Citronnade Menthe">
+          <div class="m-img-overlay"></div>
+          <div class="m-tags"><span class="m-tag tag-gold">★ Best-seller</span></div>
+        </div>
+        <div class="m-body">
+          <div class="m-name">Citronnade Menthe</div>
+          <p class="m-desc">Citron pressé, menthe fraîche, glaçons. Faite maison, fraîcheur garantie à chaque gorgée.</p>
+          <div class="m-footer">
+            <div class="m-price">2,50 €</div>
+            <a href="commander.html" class="m-btn">Commander →</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="m-card">
+        <div class="m-img-wrap">
+          <img class="m-img" src="Traditional Turkish tea in a classic tulip shaped glass on a small saucer.png" alt="Thé Turc">
+          <div class="m-img-overlay"></div>
+          <div class="m-tags"><span class="m-tag tag-light">Traditionnel</span></div>
+        </div>
+        <div class="m-body">
+          <div class="m-name">Thé Turc</div>
+          <p class="m-desc">Thé noir fort servi dans le verre tulipe traditionnel. L'authenticité à chaque gorgée.</p>
+          <div class="m-footer">
+            <div class="m-price">1,50 €</div>
+            <a href="commander.html" class="m-btn">Commander →</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===== DESSERTS ===== -->
+  <section class="cat-section" id="desserts">
+    <div class="cat-header">
+      <div class="cat-eyebrow">Pour finir en beauté</div>
+      <h2 class="cat-title">Desserts</h2>
+    </div>
+    <div class="menu-cards">
+
+      <div class="m-card">
+        <div class="m-img-wrap">
+          <img class="m-img" src="Dessert or drink/Three scoops of premium vanilla ice cream in a tall elegant crystal cut glass bowl on a stem,.png" alt="Glace Vanille">
+          <div class="m-img-overlay"></div>
+          <div class="m-tags"><span class="m-tag tag-light">Dessert</span></div>
+        </div>
+        <div class="m-body">
+          <div class="m-name">Glace Vanille</div>
+          <p class="m-desc">3 boules de crème glacée vanille dans un verre de cristal taillé. Pour finir le repas en beauté.</p>
+          <div class="m-footer">
+            <div class="m-price">3,50 €</div>
+            <a href="commander.html" class="m-btn">Commander →</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="m-card">
+        <div class="m-img-wrap">
+          <img class="m-img" src="Fresh falafel bowl served in a tall elegant crystal cut glass bowl on a stem.png" alt="Salade Falafels">
+          <div class="m-img-overlay"></div>
+          <div class="m-tags"><span class="m-tag tag-green">Végétarien</span></div>
+        </div>
+        <div class="m-body">
+          <div class="m-name">Salade Falafels</div>
+          <p class="m-desc">Falafels croustillants sur lit de salade fraîche, sauce tzatziki. Léger, gourmand, équilibré.</p>
+          <div class="m-footer">
+            <div class="m-price">4,00 €</div>
+            <a href="commander.html" class="m-btn">Commander →</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="m-card">
+        <div class="m-img-wrap">
+          <img class="m-img" src="Fresh Greek salad elegantly arranged on a wide flat white ceramic plate.png" alt="Salade Grecque">
+          <div class="m-img-overlay"></div>
+          <div class="m-tags"><span class="m-tag tag-light">Frais</span></div>
+        </div>
+        <div class="m-body">
+          <div class="m-name">Salade Grecque</div>
+          <p class="m-desc">Tomates, concombres, olives, feta, huile d'olive. La Méditerranée dans ton assiette.</p>
+          <div class="m-footer">
+            <div class="m-price">4,50 €</div>
+            <a href="commander.html" class="m-btn">Commander →</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===== FOOTER CTA ===== -->
+  <section class="menu-cta">
+    <h2 class="menu-cta-title">Prêt à composer<br>ton kebab ?</h2>
+    <p class="menu-cta-sub">Tu as vu la carte. Maintenant c'est à toi de jouer.</p>
+    <a href="commander.html" class="btn btn-primary" style="font-size:1rem;padding:.9rem 2.2rem">Composer mon kebab →</a>
+  </section>
+
+  <script>
+    // Highlight active category in sticky nav on scroll
+    const sections = document.querySelectorAll('.cat-section[id]');
+    const navItems = document.querySelectorAll('.cat-nav-item');
+
+    function updateNav() {
+      let current = '';
+      sections.forEach(s => {
+        if (s.getBoundingClientRect().top < 160) current = s.id;
+      });
+      navItems.forEach(item => {
+        item.classList.toggle('active', item.getAttribute('href') === '#' + current);
+      });
+    }
+    window.addEventListener('scroll', updateNav, { passive: true });
+    updateNav();
+  </script>
+
+</body>
+</html>

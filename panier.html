@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mon Panier — L'EM PILÉ</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <style>
+    body { background: #0A0604; color: var(--white); }
+
+    /* ---- HERO ---- */
+    .cart-hero {
+      padding: 8rem 5rem 4rem;
+      background: linear-gradient(160deg, #1A0C08 0%, #0A0604 65%);
+      position: relative; overflow: hidden;
+    }
+    .cart-hero::before {
+      content: '';
+      position: absolute; top: -40%; right: -8%;
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(140,26,24,.18) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .cart-hero-eyebrow {
+      font-family: var(--font-display); font-size: .78rem; font-weight: 700;
+      letter-spacing: .18em; text-transform: uppercase;
+      color: var(--btn); margin-bottom: 1rem;
+    }
+    .cart-hero-title {
+      font-family: var(--font-display); font-size: clamp(3rem, 8vw, 5.5rem);
+      font-weight: 900; text-transform: uppercase;
+      color: var(--white); line-height: .9;
+      letter-spacing: -.03em; margin-bottom: 1rem;
+    }
+    .cart-hero-title span { color: var(--btn); }
+    .cart-hero-sub {
+      font-family: var(--font-body); font-size: 1rem;
+      color: rgba(255,255,255,.5);
+    }
+
+    /* ---- MAIN LAYOUT ---- */
+    .cart-body { background: #0A0604; padding: 4rem 5rem; }
+    .cart-layout {
+      display: grid;
+      grid-template-columns: 1fr 360px;
+      gap: 2.5rem;
+      max-width: 1200px; margin: 0 auto;
+    }
+
+    /* ---- SECTION LABELS ---- */
+    .cs-eyebrow {
+      font-family: var(--font-display); font-size: .72rem; font-weight: 700;
+      letter-spacing: .18em; text-transform: uppercase;
+      color: var(--btn); margin-bottom: .4rem;
+    }
+    .cs-title {
+      font-family: var(--font-display); font-size: 1.6rem;
+      font-weight: 900; text-transform: uppercase;
+      color: var(--white); margin-bottom: 1.5rem;
+    }
+
+    /* ---- ARTICLE CARD ---- */
+    .article-card {
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.09);
+      border-radius: var(--radius-lg); overflow: hidden;
+      display: flex; margin-bottom: 1rem;
+      transition: border-color .2s, opacity .25s, transform .25s;
+    }
+    .article-card:hover { border-color: rgba(255,255,255,.16); }
+    .article-img {
+      width: 140px; min-width: 140px; height: 160px;
+      object-fit: cover; display: block;
+    }
+    .article-body {
+      flex: 1; padding: 1.2rem 1.4rem;
+      display: flex; flex-direction: column; gap: .3rem;
+    }
+    .article-tag {
+      font-family: var(--font-display); font-size: .6rem; font-weight: 800;
+      letter-spacing: .1em; text-transform: uppercase;
+      padding: .18rem .55rem; border-radius: var(--radius-xl);
+      display: inline-block; margin-bottom: .2rem;
+    }
+    .article-name {
+      font-family: var(--font-display); font-size: 1.1rem; font-weight: 800;
+      text-transform: uppercase; color: var(--white); line-height: 1.1;
+    }
+    .article-details { display: flex; flex-wrap: wrap; gap: .3rem; margin-top: .2rem; }
+    .article-detail-pill {
+      font-family: var(--font-body); font-size: .72rem;
+      color: rgba(255,255,255,.55);
+      background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.1);
+      border-radius: var(--radius-xl); padding: .15rem .55rem;
+    }
+    .article-footer {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-top: auto; padding-top: .6rem; flex-wrap: wrap; gap: .5rem;
+    }
+    .article-price {
+      font-family: var(--font-display); font-size: 1.2rem; font-weight: 900;
+      color: var(--white);
+    }
+    .article-actions { display: flex; align-items: center; gap: .65rem; flex-wrap: wrap; }
+    .qty-stepper { display: flex; align-items: center; gap: .45rem; }
+    .qty-btn {
+      width: 30px; height: 30px; border-radius: 50%;
+      background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.18);
+      color: var(--white); font-size: 1.1rem; font-weight: 700; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; line-height: 1;
+      transition: background .15s;
+    }
+    .qty-btn:hover { background: rgba(255,255,255,.2); }
+    .qty-val {
+      font-family: var(--font-display); font-size: 1.1rem; font-weight: 800;
+      color: var(--white); min-width: 1.4rem; text-align: center;
+    }
+    .article-edit-btn {
+      background: transparent; border: 1px solid rgba(255,255,255,.18);
+      color: rgba(255,255,255,.55); border-radius: var(--radius-xl);
+      padding: .3rem .8rem; font-family: var(--font-display);
+      font-size: .72rem; font-weight: 700; letter-spacing: .06em;
+      text-transform: uppercase; cursor: pointer;
+      transition: background .15s, color .15s; text-decoration: none;
+      display: inline-flex; align-items: center;
+    }
+    .article-edit-btn:hover { background: rgba(255,255,255,.1); color: var(--white); }
+    .article-remove-btn {
+      background: transparent; border: none;
+      color: rgba(255,255,255,.3); cursor: pointer;
+      font-size: 1.1rem; padding: .2rem; line-height: 1;
+      transition: color .15s;
+    }
+    .article-remove-btn:hover { color: var(--btn); }
+
+    /* ---- ADD ARTICLE ---- */
+    .add-article-btn {
+      display: flex; align-items: center; gap: .7rem;
+      background: rgba(255,255,255,.03);
+      border: 1.5px dashed rgba(255,255,255,.16);
+      border-radius: var(--radius-lg);
+      padding: 1.1rem 1.5rem;
+      color: rgba(255,255,255,.45);
+      font-family: var(--font-display); font-size: .85rem; font-weight: 700;
+      letter-spacing: .06em; text-transform: uppercase;
+      text-decoration: none;
+      transition: border-color .2s, color .2s, background .2s;
+      margin-bottom: 2.5rem;
+    }
+    .add-article-btn:hover {
+      border-color: var(--btn); color: var(--white);
+      background: rgba(140,26,24,.07);
+    }
+
+    /* ---- PROMO ---- */
+    .promo-card {
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.09);
+      border-radius: var(--radius-lg); padding: 1.4rem 1.5rem;
+    }
+    .promo-form { display: flex; gap: .65rem; }
+    .promo-input {
+      flex: 1; background: rgba(255,255,255,.08);
+      border: 1.5px solid rgba(255,255,255,.15);
+      border-radius: var(--radius-xl); padding: .72rem 1.2rem;
+      font-family: var(--font-body); font-size: .9rem; color: var(--white);
+      outline: none; letter-spacing: .06em; transition: border-color .2s;
+    }
+    .promo-input::placeholder { color: rgba(255,255,255,.28); }
+    .promo-input:focus { border-color: rgba(200,60,58,.65); }
+    .promo-apply-btn {
+      background: var(--btn); color: var(--white); border: none;
+      border-radius: var(--radius-xl); padding: .72rem 1.4rem;
+      font-family: var(--font-display); font-size: .82rem; font-weight: 700;
+      letter-spacing: .06em; text-transform: uppercase;
+      cursor: pointer; white-space: nowrap; transition: background .2s;
+    }
+    .promo-apply-btn:hover { background: var(--btn-hover); }
+    .promo-feedback {
+      margin-top: .7rem; padding: .6rem .9rem;
+      border-radius: var(--radius-md);
+      font-family: var(--font-body); font-size: .85rem; display: none;
+    }
+    .promo-feedback.success {
+      display: block;
+      background: rgba(39,174,96,.18); border: 1px solid rgba(39,174,96,.4);
+      color: #7ED8A4;
+    }
+    .promo-feedback.error {
+      display: block;
+      background: rgba(235,87,87,.15); border: 1px solid rgba(235,87,87,.35);
+      color: #F0A0A0;
+    }
+
+    /* ---- SUMMARY (sticky right) ---- */
+    .cart-right { position: relative; }
+    .cart-summary-sticky { position: sticky; top: 100px; }
+    .summary-card {
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.09);
+      border-radius: var(--radius-lg); padding: 1.5rem;
+    }
+    .summary-title {
+      font-family: var(--font-display); font-size: 1rem; font-weight: 800;
+      text-transform: uppercase; color: var(--white);
+      margin-bottom: 1.2rem; letter-spacing: .06em;
+    }
+    .summary-line {
+      display: flex; justify-content: space-between; align-items: baseline;
+      margin-bottom: .65rem;
+      font-family: var(--font-body); font-size: .88rem;
+    }
+    .summary-line-label { color: rgba(255,255,255,.5); }
+    .summary-line-val { color: var(--white); font-weight: 600; }
+    .summary-line.discount .summary-line-val { color: #7ED8A4; }
+    .summary-divider { height: 1px; background: rgba(255,255,255,.08); margin: 1rem 0; }
+    .summary-total {
+      display: flex; justify-content: space-between; align-items: baseline;
+    }
+    .summary-total-label {
+      font-family: var(--font-display); font-size: .9rem; font-weight: 700;
+      text-transform: uppercase; color: rgba(255,255,255,.65); letter-spacing: .06em;
+    }
+    .summary-total-val {
+      font-family: var(--font-display); font-size: 1.8rem; font-weight: 900;
+      color: var(--white);
+    }
+
+    /* ---- LIVRAISON (cream) ---- */
+    .livraison-section { background: var(--bg); padding: 5rem 5rem 4rem; }
+    .livraison-inner { max-width: 1200px; margin: 0 auto; }
+    .livraison-section .cs-title { color: var(--text-dark); }
+
+    .mode-toggle { display: flex; gap: 1rem; margin-bottom: 2rem; }
+    .mode-btn {
+      flex: 1; cursor: pointer;
+      border-radius: var(--radius-lg); overflow: hidden;
+      border: 2px solid var(--frame);
+      transition: transform .2s, border-color .2s, box-shadow .2s;
+      position: relative; background: var(--white);
+    }
+    .mode-btn:hover { transform: translateY(-3px); border-color: var(--icon-bg); }
+    .mode-btn.active {
+      border-color: var(--btn);
+      box-shadow: 0 0 0 3px rgba(140,26,24,.15);
+    }
+    .mode-btn-img { width: 100%; height: 110px; object-fit: cover; display: block; }
+    .mode-btn-body { padding: .85rem 1rem; }
+    .mode-btn-name {
+      font-family: var(--font-display); font-size: .95rem; font-weight: 800;
+      text-transform: uppercase; color: var(--text-dark);
+    }
+    .mode-btn-desc {
+      font-family: var(--font-body); font-size: .78rem; color: var(--subtitle);
+    }
+    .mode-check {
+      position: absolute; top: 8px; right: 8px;
+      width: 24px; height: 24px;
+      background: var(--btn); color: var(--white);
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      font-size: .72rem; font-weight: 900;
+      opacity: 0; transform: scale(.4);
+      transition: opacity .18s, transform .25s cubic-bezier(.34,1.56,.64,1);
+    }
+    .mode-btn.active .mode-check { opacity: 1; transform: scale(1); }
+
+    .delivery-panel, .cc-panel { display: none; }
+    .delivery-panel.open, .cc-panel.open { display: block; }
+
+    #cartDeliveryMap {
+      width: 100%; height: 260px;
+      border-radius: var(--radius-lg);
+      border: 2px solid var(--frame);
+      margin-bottom: 1rem; z-index: 1; position: relative;
+    }
+    .delivery-form { display: flex; gap: .65rem; margin-bottom: .7rem; }
+    .delivery-input {
+      flex: 1; background: var(--white); border: 1.5px solid var(--frame);
+      border-radius: var(--radius-xl); padding: .75rem 1.2rem;
+      font-family: var(--font-body); font-size: .9rem; color: var(--text-dark);
+      outline: none; transition: border-color .2s;
+    }
+    .delivery-input::placeholder { color: var(--subtitle); opacity: .6; }
+    .delivery-input:focus { border-color: var(--btn); }
+    .delivery-verify-btn {
+      background: var(--btn); color: var(--white); border: none;
+      border-radius: var(--radius-xl); padding: .75rem 1.4rem;
+      font-family: var(--font-display); font-size: .82rem; font-weight: 700;
+      letter-spacing: .06em; text-transform: uppercase;
+      cursor: pointer; white-space: nowrap; transition: background .2s;
+    }
+    .delivery-verify-btn:hover { background: var(--btn-hover); }
+    .delivery-result {
+      padding: .7rem 1rem; border-radius: var(--radius-md);
+      font-family: var(--font-body); font-size: .87rem;
+      display: none; line-height: 1.5;
+    }
+    .delivery-result.success {
+      display: block;
+      background: rgba(39,174,96,.1); border: 1.5px solid rgba(39,174,96,.35);
+      color: #1A7A45;
+    }
+    .delivery-result.error {
+      display: block;
+      background: rgba(235,87,87,.08); border: 1.5px solid rgba(235,87,87,.3);
+      color: #B03030;
+    }
+    .cc-info-card {
+      background: var(--white); border: 1.5px solid var(--frame);
+      border-radius: var(--radius-lg); padding: 1.2rem 1.5rem;
+      display: flex; flex-direction: column; gap: .5rem;
+    }
+    .cc-row { font-family: var(--font-body); font-size: .9rem; color: var(--text-dark); }
+
+    /* ---- PAIEMENT (bordeaux) ---- */
+    .payment-section {
+      background: linear-gradient(160deg, #1C0507 0%, #280A08 100%);
+      padding: 5rem 5rem 6rem;
+    }
+    .payment-inner { max-width: 620px; margin: 0 auto; }
+
+    .pay-methods { display: flex; gap: 1rem; margin-bottom: 1.5rem; }
+    .pay-method-btn {
+      flex: 1; padding: 1.1rem 1rem;
+      background: rgba(255,255,255,.07); border: 1.5px solid rgba(255,255,255,.15);
+      border-radius: var(--radius-lg); cursor: pointer;
+      display: flex; flex-direction: column; align-items: center; gap: .4rem;
+      transition: background .2s, border-color .2s;
+    }
+    .pay-method-btn:hover { background: rgba(255,255,255,.12); }
+    .pay-method-btn.active {
+      background: rgba(140,26,24,.5); border-color: rgba(200,60,58,.6);
+    }
+    .pay-method-icon { font-size: 2rem; line-height: 1; }
+    .pay-method-label {
+      font-family: var(--font-display); font-size: .88rem; font-weight: 700;
+      text-transform: uppercase; color: var(--white); letter-spacing: .06em;
+    }
+    .pay-method-sub { font-family: var(--font-body); font-size: .72rem; color: rgba(255,255,255,.5); }
+
+    .card-form { animation: slideDown .3s ease; }
+    .card-form.hidden { display: none; }
+    .card-field { margin-bottom: 1rem; }
+    .card-label {
+      font-family: var(--font-display); font-size: .68rem; font-weight: 700;
+      letter-spacing: .1em; text-transform: uppercase;
+      color: rgba(255,255,255,.5); display: block; margin-bottom: .35rem;
+    }
+    .card-input {
+      width: 100%; box-sizing: border-box;
+      background: rgba(255,255,255,.08); border: 1.5px solid rgba(255,255,255,.18);
+      border-radius: var(--radius-md); padding: .75rem 1rem;
+      font-family: var(--font-body); font-size: .92rem; color: var(--white);
+      outline: none; transition: border-color .2s;
+    }
+    .card-input::placeholder { color: rgba(255,255,255,.28); }
+    .card-input:focus { border-color: rgba(200,60,58,.65); }
+    .card-row { display: flex; gap: .75rem; }
+    .card-row .card-field { flex: 1; }
+
+    .cash-info {
+      background: rgba(255,255,255,.07); border-radius: var(--radius-md);
+      padding: 1rem 1.2rem; margin-bottom: 1.2rem;
+      font-family: var(--font-body); font-size: .88rem;
+      color: rgba(255,255,255,.7); line-height: 1.6;
+    }
+    .cash-info.hidden { display: none; }
+
+    .confirm-btn {
+      width: 100%; padding: 1.1rem;
+      background: var(--btn); color: var(--white);
+      border: 2px solid var(--btn-border); border-radius: var(--radius-xl);
+      font-family: var(--font-display); font-size: 1.05rem; font-weight: 800;
+      text-transform: uppercase; letter-spacing: .07em;
+      cursor: pointer; transition: background .2s, transform .15s;
+      box-shadow: 0 6px 24px rgba(140,26,24,.45);
+    }
+    .confirm-btn:hover { background: var(--btn-hover); transform: translateY(-2px); }
+
+    /* ---- CONFIRMATION ---- */
+    .confirmation-screen {
+      display: none; position: fixed; inset: 0; z-index: 500;
+      background: linear-gradient(135deg, #0A0604 0%, #1A0507 50%, #0A0604 100%);
+      flex-direction: column; align-items: center; justify-content: center;
+      text-align: center; padding: 2rem;
+    }
+    .confirmation-screen.open { display: flex; }
+    .confirm-emoji { font-size: 5rem; margin-bottom: 1.5rem; animation: float 3s ease-in-out infinite; }
+    @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-16px)} }
+    .confirm-title {
+      font-family: var(--font-display); font-size: clamp(2.5rem,8vw,5rem);
+      font-weight: 900; text-transform: uppercase; color: var(--white);
+      line-height: 1; margin-bottom: .6rem;
+    }
+    .confirm-sub {
+      font-family: var(--font-body); color: rgba(255,255,255,.6);
+      font-size: 1rem; margin-bottom: .4rem;
+    }
+    .confirm-total-val {
+      font-family: var(--font-display); font-size: 2.2rem; font-weight: 900;
+      color: var(--white); margin-bottom: 2rem;
+    }
+    .confirm-actions { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; }
+    .confirm-actions a, .confirm-actions button {
+      border-radius: var(--radius-xl); padding: .8rem 2rem;
+      font-family: var(--font-display); font-size: 1rem; font-weight: 700;
+      letter-spacing: .06em; text-transform: uppercase;
+      cursor: pointer; text-decoration: none; display: inline-flex; align-items: center;
+    }
+    .btn-confirm-primary {
+      background: var(--btn); color: var(--bg);
+      border: 2px solid var(--btn-border);
+    }
+    .btn-confirm-ghost {
+      background: rgba(255,255,255,.1); color: var(--white);
+      border: 1.5px solid rgba(255,255,255,.22);
+    }
+
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ---- RESPONSIVE ---- */
+    @media (max-width: 900px) {
+      .cart-layout { grid-template-columns: 1fr; }
+      .cart-right { position: static; }
+      .cart-summary-sticky { position: static; }
+    }
+    @media (max-width: 768px) {
+      .cart-body { padding: 3rem 1.5rem; }
+      .livraison-section, .payment-section { padding: 3.5rem 1.5rem; }
+      .article-img { width: 100px; min-width: 100px; height: 130px; }
+      .mode-toggle { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <header class="navbar">
+    <a href="accueil.html">
+      <img src="Lemepile-logo-kebab.png" alt="L'EM PILÉ" class="logo">
+    </a>
+    <nav>
+      <a href="menu.html">La Carte</a>
+      <a href="index.html">Composer</a>
+      <a href="accueil.html#concept">Concept</a>
+      <a href="accueil.html#contact">Contact</a>
+    </nav>
+    <button class="cart-btn" style="background:var(--btn)">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0">
+        <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+      </svg>
+      Panier <span class="cart-count" id="navCartCount">4</span>
+    </button>
+  </header>
+
+  <!-- HERO -->
+  <section class="cart-hero">
+    <div class="cart-hero-eyebrow">L'EM PILÉ · Commande en cours</div>
+    <h1 class="cart-hero-title">Mon<br><span>Panier</span></h1>
+    <p class="cart-hero-sub" id="cartHeroSub">4 articles · 24,10 €</p>
+  </section>
+
+  <!-- ARTICLES + RÉCAP -->
+  <section class="cart-body">
+    <div class="cart-layout">
+
+      <!-- GAUCHE -->
+      <div class="cart-left">
+        <div class="cs-eyebrow">Ma commande</div>
+        <div class="cs-title">Mes articles</div>
+
+        <div id="articleList">
+
+          <!-- Article 1 — Kebab Signature -->
+          <div class="article-card" id="card-1" data-price="10.70">
+            <img class="article-img" src="Premium döner kebab sandwich, perfectly wrapped.png" alt="Kebab Signature">
+            <div class="article-body">
+              <span class="article-tag" style="background:var(--btn);color:var(--white)">★ Signature</span>
+              <div class="article-name">Kebab Signature</div>
+              <div class="article-details">
+                <span class="article-detail-pill">Lavash</span>
+                <span class="article-detail-pill">Taille L</span>
+                <span class="article-detail-pill">Mixte</span>
+                <span class="article-detail-pill">Romaine</span>
+                <span class="article-detail-pill">Tomates fraîches</span>
+                <span class="article-detail-pill">Harissa</span>
+                <span class="article-detail-pill">Sauce blanche</span>
+                <span class="article-detail-pill">Fromage +0,80€</span>
+              </div>
+              <div class="article-footer">
+                <div class="article-price" id="price-1">10,70 €</div>
+                <div class="article-actions">
+                  <div class="qty-stepper">
+                    <button class="qty-btn" onclick="changeQty(1,-1)">−</button>
+                    <span class="qty-val" id="qty-1">1</span>
+                    <button class="qty-btn" onclick="changeQty(1,1)">+</button>
+                  </div>
+                  <a href="index.html" class="article-edit-btn">Modifier</a>
+                  <button class="article-remove-btn" onclick="removeArticle(1)" title="Supprimer">✕</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Article 2 — Falafel Bowl -->
+          <div class="article-card" id="card-2" data-price="8.90">
+            <img class="article-img" src="Fresh falafel bowl served in a tall elegant crystal cut glass bowl on a stem.png" alt="Falafel Bowl">
+            <div class="article-body">
+              <span class="article-tag" style="background:#27AE60;color:#fff">Végétarien</span>
+              <div class="article-name">Falafel Bowl</div>
+              <div class="article-details">
+                <span class="article-detail-pill">Pita</span>
+                <span class="article-detail-pill">Taille M</span>
+                <span class="article-detail-pill">Falafels</span>
+                <span class="article-detail-pill">Romaine</span>
+                <span class="article-detail-pill">Tomates cerises</span>
+                <span class="article-detail-pill">Tzatziki</span>
+              </div>
+              <div class="article-footer">
+                <div class="article-price" id="price-2">8,90 €</div>
+                <div class="article-actions">
+                  <div class="qty-stepper">
+                    <button class="qty-btn" onclick="changeQty(2,-1)">−</button>
+                    <span class="qty-val" id="qty-2">1</span>
+                    <button class="qty-btn" onclick="changeQty(2,1)">+</button>
+                  </div>
+                  <a href="index.html" class="article-edit-btn">Modifier</a>
+                  <button class="article-remove-btn" onclick="removeArticle(2)" title="Supprimer">✕</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Article 3 — Frites -->
+          <div class="article-card" id="card-3" data-price="2.00">
+            <img class="article-img" src="Crispy thin cut golden french fries .png" alt="Frites">
+            <div class="article-body">
+              <span class="article-tag" style="background:#F2C94C;color:#1A0C08">Extra</span>
+              <div class="article-name">Frites Maison</div>
+              <div class="article-details">
+                <span class="article-detail-pill">Croustillantes & dorées</span>
+              </div>
+              <div class="article-footer">
+                <div class="article-price" id="price-3">2,00 €</div>
+                <div class="article-actions">
+                  <div class="qty-stepper">
+                    <button class="qty-btn" onclick="changeQty(3,-1)">−</button>
+                    <span class="qty-val" id="qty-3">1</span>
+                    <button class="qty-btn" onclick="changeQty(3,1)">+</button>
+                  </div>
+                  <button class="article-remove-btn" onclick="removeArticle(3)" title="Supprimer">✕</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Article 4 — Citronnade -->
+          <div class="article-card" id="card-4" data-price="2.50">
+            <img class="article-img" src="Fresh mint lemonade in a tall glass with ice cubes and mint sprigs.png" alt="Citronnade Menthe">
+            <div class="article-body">
+              <span class="article-tag" style="background:rgba(255,255,255,.15);color:#fff">Boisson</span>
+              <div class="article-name">Citronnade Menthe</div>
+              <div class="article-details">
+                <span class="article-detail-pill">Faite maison</span>
+                <span class="article-detail-pill">Citron · Menthe · Glaçons</span>
+              </div>
+              <div class="article-footer">
+                <div class="article-price" id="price-4">2,50 €</div>
+                <div class="article-actions">
+                  <div class="qty-stepper">
+                    <button class="qty-btn" onclick="changeQty(4,-1)">−</button>
+                    <span class="qty-val" id="qty-4">1</span>
+                    <button class="qty-btn" onclick="changeQty(4,1)">+</button>
+                  </div>
+                  <button class="article-remove-btn" onclick="removeArticle(4)" title="Supprimer">✕</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /articleList -->
+
+        <a href="index.html" class="add-article-btn">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+          Composer un autre kebab
+        </a>
+
+        <!-- PROMO -->
+        <div class="cs-eyebrow">Réduction</div>
+        <div class="cs-title">Code de remise</div>
+        <div class="promo-card">
+          <div class="promo-form">
+            <input type="text" class="promo-input" id="promoInput" placeholder="Ex : MERCREDI10" onkeydown="if(event.key==='Enter')applyPromo()">
+            <button class="promo-apply-btn" onclick="applyPromo()">Appliquer</button>
+          </div>
+          <div class="promo-feedback" id="promoFeedback"></div>
+        </div>
+      </div>
+
+      <!-- DROITE — récap sticky -->
+      <div class="cart-right">
+        <div class="cart-summary-sticky">
+          <div class="summary-card">
+            <div class="summary-title">Récapitulatif</div>
+
+            <div class="summary-line" id="sline-1">
+              <span class="summary-line-label">Kebab Signature × <span id="sq-1">1</span></span>
+              <span class="summary-line-val" id="sp-1">10,70 €</span>
+            </div>
+            <div class="summary-line" id="sline-2">
+              <span class="summary-line-label">Falafel Bowl × <span id="sq-2">1</span></span>
+              <span class="summary-line-val" id="sp-2">8,90 €</span>
+            </div>
+            <div class="summary-line" id="sline-3">
+              <span class="summary-line-label">Frites × <span id="sq-3">1</span></span>
+              <span class="summary-line-val" id="sp-3">2,00 €</span>
+            </div>
+            <div class="summary-line" id="sline-4">
+              <span class="summary-line-label">Citronnade × <span id="sq-4">1</span></span>
+              <span class="summary-line-val" id="sp-4">2,50 €</span>
+            </div>
+
+            <div class="summary-divider"></div>
+
+            <div class="summary-line">
+              <span class="summary-line-label">Sous-total</span>
+              <span class="summary-line-val" id="sumSubtotal">24,10 €</span>
+            </div>
+            <div class="summary-line">
+              <span class="summary-line-label">Livraison</span>
+              <span class="summary-line-val" id="sumDelivery">2,90 €</span>
+            </div>
+            <div class="summary-line discount" id="discountLine" style="display:none">
+              <span class="summary-line-label">Code promo</span>
+              <span class="summary-line-val" id="sumDiscount"></span>
+            </div>
+
+            <div class="summary-divider"></div>
+
+            <div class="summary-total">
+              <span class="summary-total-label">Total</span>
+              <span class="summary-total-val" id="sumTotal">27,00 €</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- LIVRAISON (crème) -->
+  <section class="livraison-section">
+    <div class="livraison-inner">
+      <div class="cs-eyebrow">Récupération</div>
+      <div class="cs-title">Mode de livraison</div>
+
+      <div class="mode-toggle">
+        <div class="mode-btn active" id="modeLivraison" onclick="selectMode('livraison')">
+          <img class="mode-btn-img" src="Minimal flat vector illustration of a delivery courier.png" alt="Livraison">
+          <div class="mode-btn-body">
+            <div class="mode-btn-name">Livraison à domicile</div>
+            <div class="mode-btn-desc">Livré en ~30 min · +2,90 €</div>
+          </div>
+          <div class="mode-check">✓</div>
+        </div>
+        <div class="mode-btn" id="modeClick" onclick="selectMode('click')">
+          <img class="mode-btn-img" src="Minimal flat vector illustration of a person collecting an order.png" alt="Click & Collect">
+          <div class="mode-btn-body">
+            <div class="mode-btn-name">Click &amp; Collect</div>
+            <div class="mode-btn-desc">Prêt en 15 min · Gratuit</div>
+          </div>
+          <div class="mode-check">✓</div>
+        </div>
+      </div>
+
+      <!-- Panel livraison -->
+      <div class="delivery-panel open" id="deliveryPanel">
+        <div id="cartDeliveryMap"></div>
+        <div class="delivery-form">
+          <input type="text" class="delivery-input" id="cartDeliveryAddr"
+            placeholder="Votre adresse de livraison…"
+            onkeydown="if(event.key==='Enter')verifyAddr()">
+          <button class="delivery-verify-btn" onclick="verifyAddr()">Vérifier →</button>
+        </div>
+        <div class="delivery-result" id="cartDeliveryResult"></div>
+      </div>
+
+      <!-- Panel C&C -->
+      <div class="cc-panel" id="ccPanel">
+        <div class="cc-info-card">
+          <div class="cc-row">📍 <strong>14 Rue d'Alger, 83000 Toulon</strong></div>
+          <div class="cc-row">🕐 Lun–Sam : 11h – 23h &nbsp;·&nbsp; Dim : 12h – 21h</div>
+          <div class="cc-row">⏱ Prêt en environ <strong>15 minutes</strong></div>
+          <div class="cc-row">📞 <strong>04 94 XX XX XX</strong></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PAIEMENT (bordeaux) -->
+  <section class="payment-section">
+    <div class="payment-inner">
+      <div class="cs-eyebrow">Finaliser</div>
+      <div class="cs-title">Paiement</div>
+
+      <div class="pay-methods">
+        <button class="pay-method-btn active" id="payBtnCard" onclick="selectPay('card')">
+          <span class="pay-method-icon">💳</span>
+          <span class="pay-method-label">Carte bancaire</span>
+          <span class="pay-method-sub">CB · Visa · Mastercard</span>
+        </button>
+        <button class="pay-method-btn" id="payBtnCash" onclick="selectPay('cash')">
+          <span class="pay-method-icon">💶</span>
+          <span class="pay-method-label">Espèces</span>
+          <span class="pay-method-sub">À la livraison / au retrait</span>
+        </button>
+      </div>
+
+      <div class="card-form" id="cardForm">
+        <div class="card-field">
+          <label class="card-label">Numéro de carte</label>
+          <input class="card-input" type="text" placeholder="1234 5678 9012 3456" maxlength="19" oninput="fmtCard(this)">
+        </div>
+        <div class="card-row">
+          <div class="card-field">
+            <label class="card-label">Expiration</label>
+            <input class="card-input" type="text" placeholder="MM/AA" maxlength="5" oninput="fmtExp(this)">
+          </div>
+          <div class="card-field">
+            <label class="card-label">CVC</label>
+            <input class="card-input" type="text" placeholder="123" maxlength="3">
+          </div>
+        </div>
+        <div class="card-field">
+          <label class="card-label">Titulaire</label>
+          <input class="card-input" type="text" placeholder="JEAN DUPONT">
+        </div>
+      </div>
+
+      <div class="cash-info hidden" id="cashInfo">
+        💡 Le règlement s'effectue à la livraison ou au retrait. Préparez l'appoint si possible.
+      </div>
+
+      <button class="confirm-btn" onclick="confirmOrder()">
+        Confirmer ma commande &nbsp;·&nbsp; <span id="confirmBtnTotal">27,00 €</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- CONFIRMATION -->
+  <div class="confirmation-screen" id="confirmationScreen">
+    <div class="confirm-emoji">🌯</div>
+    <div class="confirm-title">C'est en route !</div>
+    <div class="confirm-sub">Commande enregistrée · Merci de ta confiance</div>
+    <div class="confirm-total-val" id="confirmFinalTotal">27,00 €</div>
+    <div class="confirm-sub" id="confirmModeLabel" style="margin-bottom:2rem">Livraison estimée : 25–35 min</div>
+    <div class="confirm-actions">
+      <button class="btn-confirm-primary" onclick="location.href='index.html'">Nouvelle commande</button>
+      <a class="btn-confirm-ghost" href="accueil.html">Retour à l'accueil</a>
+    </div>
+  </div>
+
+  <script>
+  /* ===== DONNÉES MOCK ===== */
+  const arts = {
+    1: { base: 10.70, qty: 1 },
+    2: { base: 8.90,  qty: 1 },
+    3: { base: 2.00,  qty: 1 },
+    4: { base: 2.50,  qty: 1 },
+  };
+  let deliveryFee = 2.90;
+  let discountPct = 0;
+  let currentMode = 'livraison';
+
+  /* ===== QTY ===== */
+  function changeQty(id, delta) {
+    arts[id].qty = Math.max(0, arts[id].qty + delta);
+    if (arts[id].qty === 0) { removeArticle(id); return; }
+    document.getElementById('qty-' + id).textContent = arts[id].qty;
+    document.getElementById('price-' + id).textContent = fmt(arts[id].base * arts[id].qty);
+    render();
+  }
+
+  function removeArticle(id) {
+    const card = document.getElementById('card-' + id);
+    if (card) {
+      card.style.opacity = '0'; card.style.transform = 'scale(.95)';
+      card.style.transition = 'all .25s';
+      setTimeout(() => card.remove(), 260);
+    }
+    arts[id].qty = 0;
+    const sl = document.getElementById('sline-' + id);
+    if (sl) sl.style.display = 'none';
+    render();
+  }
+
+  /* ===== TOTAL ===== */
+  function subtotal() {
+    return Object.values(arts).reduce((s, a) => s + a.base * a.qty, 0);
+  }
+
+  function fmt(n) {
+    return n.toFixed(2).replace('.', ',') + ' €';
+  }
+
+  function render() {
+    const sub  = subtotal();
+    const fee  = currentMode === 'click' ? 0 : deliveryFee;
+    const disc = discountPct > 0 ? sub * discountPct : 0;
+    const tot  = sub + fee - disc;
+
+    // Lines
+    [1,2,3,4].forEach(id => {
+      const qEl = document.getElementById('sq-' + id);
+      const pEl = document.getElementById('sp-' + id);
+      if (qEl) qEl.textContent = arts[id].qty;
+      if (pEl) pEl.textContent = fmt(arts[id].base * arts[id].qty);
+    });
+
+    document.getElementById('sumSubtotal').textContent = fmt(sub);
+    document.getElementById('sumDelivery').textContent = currentMode === 'click' ? 'Gratuit' : fmt(fee);
+    document.getElementById('sumTotal').textContent    = fmt(tot);
+    document.getElementById('confirmBtnTotal').textContent = fmt(tot);
+    document.getElementById('confirmFinalTotal').textContent = fmt(tot);
+
+    const dl = document.getElementById('discountLine');
+    dl.style.display = disc > 0 ? 'flex' : 'none';
+    if (disc > 0) document.getElementById('sumDiscount').textContent = '−' + fmt(disc);
+
+    // Hero
+    const count = Object.values(arts).filter(a => a.qty > 0).length;
+    document.getElementById('cartHeroSub').textContent = count + ' article' + (count > 1 ? 's' : '') + ' · ' + fmt(sub);
+    document.getElementById('navCartCount').textContent = count;
+  }
+
+  /* ===== PROMO ===== */
+  const PROMOS = { 'MERCREDI10': .10, 'BIENVENUE': .05 };
+
+  function applyPromo() {
+    const code = document.getElementById('promoInput').value.trim().toUpperCase();
+    const fb   = document.getElementById('promoFeedback');
+    if (PROMOS[code]) {
+      discountPct = PROMOS[code];
+      fb.className = 'promo-feedback success';
+      fb.textContent = '✅ Code appliqué — ' + (PROMOS[code] * 100) + '% de réduction !';
+    } else {
+      discountPct = 0;
+      fb.className = 'promo-feedback error';
+      fb.textContent = '❌ Code invalide. Essayez MERCREDI10 le mercredi soir.';
+    }
+    render();
+  }
+
+  /* ===== MODE ===== */
+  function selectMode(mode) {
+    currentMode = mode;
+    document.getElementById('modeLivraison').classList.toggle('active', mode === 'livraison');
+    document.getElementById('modeClick').classList.toggle('active', mode === 'click');
+    document.getElementById('deliveryPanel').classList.toggle('open', mode === 'livraison');
+    document.getElementById('ccPanel').classList.toggle('open', mode === 'click');
+    if (mode === 'livraison') initMap();
+    render();
+  }
+
+  /* ===== MAP ===== */
+  const REST = { lat: 43.1252, lng: 5.9275 };
+  let map = null, userMarker = null;
+
+  function initMap() {
+    if (map) { map.invalidateSize(); return; }
+    setTimeout(() => {
+      map = L.map('cartDeliveryMap', { zoomControl: true, scrollWheelZoom: false })
+              .setView([REST.lat, REST.lng], 13);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+        maxZoom: 18
+      }).addTo(map);
+      L.circle([REST.lat, REST.lng], {
+        radius: 5000, color: '#8C1A18', fillColor: '#8C1A18',
+        fillOpacity: .09, weight: 2, dashArray: '7 5'
+      }).addTo(map);
+      L.marker([REST.lat, REST.lng], { icon: L.divIcon({
+        html: `<div style="width:40px;height:40px;background:#8C1A18;border-radius:50%;border:3px solid #FAF3EB;display:flex;align-items:center;justify-content:center;font-size:1.3rem;box-shadow:0 4px 14px rgba(0,0,0,.4)">🌯</div>`,
+        className: '', iconSize: [40,40], iconAnchor: [20,20]
+      })}).addTo(map).bindPopup('<b>L\'EM PILÉ</b><br><small>14 Rue d\'Alger, 83000 Toulon</small>').openPopup();
+      map.invalidateSize();
+    }, 120);
+  }
+
+  function haverDist(a, b, c, d) {
+    const R=6371000, r=x=>x*Math.PI/180;
+    const da=r(c-a), db=r(d-b);
+    const x=Math.sin(da/2)**2+Math.cos(r(a))*Math.cos(r(c))*Math.sin(db/2)**2;
+    return R*2*Math.atan2(Math.sqrt(x), Math.sqrt(1-x));
+  }
+
+  async function verifyAddr() {
+    const inp = document.getElementById('cartDeliveryAddr');
+    const addr = inp.value.trim(); if (!addr) { inp.focus(); return; }
+    const res = document.getElementById('cartDeliveryResult');
+    res.className = 'delivery-result'; res.style.display = 'block';
+    res.textContent = '🔍 Vérification en cours…';
+    try {
+      const q = encodeURIComponent(addr + (addr.toLowerCase().includes('toulon') ? '' : ', Toulon') + ', France');
+      const data = await (await fetch(`https://nominatim.openstreetmap.org/search?q=${q}&format=json&limit=1&countrycodes=fr`, { headers: { 'Accept-Language': 'fr', 'User-Agent': 'LEmPile/1.0' } })).json();
+      if (!data?.length) { res.className='delivery-result error'; res.innerHTML='❌ Adresse introuvable.'; return; }
+      const [lat, lng] = [parseFloat(data[0].lat), parseFloat(data[0].lon)];
+      const dist = haverDist(REST.lat, REST.lng, lat, lng);
+      if (userMarker) map.removeLayer(userMarker);
+      userMarker = L.marker([lat, lng], { icon: L.divIcon({ html:`<div style="width:14px;height:14px;background:#2F80ED;border:3px solid #fff;border-radius:50%;box-shadow:0 2px 8px rgba(0,0,0,.4)"></div>`, className:'', iconSize:[14,14], iconAnchor:[7,7] }) }).addTo(map).bindPopup('<small>Votre adresse</small>').openPopup();
+      map.flyTo([lat, lng], 14, { duration: 1.1 });
+      if (dist <= 5000) {
+        res.className = 'delivery-result success';
+        res.innerHTML = `✅ Zone confirmée · Livraison en ~30 min 🛵`;
+      } else {
+        res.className = 'delivery-result error';
+        res.innerHTML = `❌ Hors zone (${(dist/1000).toFixed(1)} km) · Zone max 5 km autour de Toulon`;
+      }
+    } catch(e) {
+      res.className='delivery-result error'; res.textContent='❌ Erreur de connexion.';
+    }
+  }
+
+  /* ===== PAIEMENT ===== */
+  function selectPay(method) {
+    document.getElementById('payBtnCard').classList.toggle('active', method === 'card');
+    document.getElementById('payBtnCash').classList.toggle('active', method === 'cash');
+    document.getElementById('cardForm').classList.toggle('hidden', method !== 'card');
+    document.getElementById('cashInfo').classList.toggle('hidden', method !== 'cash');
+  }
+  function fmtCard(el) { let v=el.value.replace(/\D/g,'').substring(0,16); el.value=v.replace(/(.{4})/g,'$1 ').trim(); }
+  function fmtExp(el)  { let v=el.value.replace(/\D/g,''); if(v.length>=2) v=v.substring(0,2)+'/'+v.substring(2,4); el.value=v; }
+
+  /* ===== CONFIRM ===== */
+  function confirmOrder() {
+    document.getElementById('confirmModeLabel').textContent =
+      currentMode === 'livraison' ? 'Livraison estimée : 25–35 min 🛵' : 'Prêt dans ~15 min · Click & Collect 🏃';
+    document.getElementById('confirmationScreen').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  /* ===== INIT ===== */
+  render();
+  initMap();
+  </script>
+
+</body>
+</html>
