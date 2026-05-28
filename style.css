@@ -132,7 +132,7 @@ ul { list-style: none; }
 .navbar {
   position: fixed;
   top: 0; left: 0; right: 0;
-  z-index: 100;
+  z-index: 1100;
   background: rgba(245,232,220,.92);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
