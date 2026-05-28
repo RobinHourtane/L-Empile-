@@ -5,7 +5,10 @@
       "PowerShell(gh --version 2>&1)",
       "mcp__Claude_Preview__preview_start",
       "Bash(git checkout *)",
-      "Bash(git merge feature/page-menu --no-ff -m ' *)"
+      "Bash(git merge feature/page-menu --no-ff -m ' *)",
+      "Bash(git merge *)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)"
     ]
   }
 }
