@@ -38,32 +38,12 @@
       );
     }
 
-    /* ---- LOGO TOP-LEFT ---- */
+    /* ---- LOGO TOP-CENTER ---- */
     .top-logo {
-      position: fixed; top: 1.2rem; left: 1.5rem; z-index: 300;
+      position: fixed; top: 1.4rem; left: 50%; transform: translateX(-50%); z-index: 300;
     }
-    .top-logo img { height: 30px; width: auto; object-fit: contain; }
+    .top-logo img { height: 64px; width: auto; object-fit: contain; }
 
-    /* ---- PROMO BANNER ---- */
-    .promo-banner {
-      position: fixed; top: 6px; left: 50%; transform: translateX(-50%);
-      z-index: 400; background: var(--btn); color: var(--bg);
-      border-radius: var(--radius-xl); padding: .38rem .9rem .38rem .75rem;
-      display: flex; align-items: center; gap: .5rem;
-      font-family: var(--font-display); font-size: .72rem; font-weight: 700;
-      letter-spacing: .06em; text-transform: uppercase;
-      box-shadow: 0 4px 18px rgba(140,26,24,.55);
-      transition: opacity .3s, transform .3s;
-      white-space: nowrap;
-    }
-    .promo-banner.hidden {
-      opacity: 0; transform: translateX(-50%) translateY(-60px); pointer-events: none;
-    }
-    .promo-close {
-      background: none; border: none; cursor: pointer;
-      color: var(--bg); opacity: .65; font-size: .85rem; padding: 0 0 0 .25rem;
-    }
-    .promo-close:hover { opacity: 1; }
 
     /* ---- CONTENT PANEL ---- */
     .screen-content {
@@ -295,14 +275,9 @@
 </head>
 <body>
 
-  <!-- Promo Banner -->
-  <div class="promo-banner" id="promoBanner">
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z" fill="#FFD700" stroke="#FFD700" stroke-width="1"/></svg>
-    &minus;10% le Mercredi soir · code&nbsp;<strong>MERCREDI10</strong>
-    <button class="promo-close" onclick="document.getElementById('promoBanner').classList.add('hidden')">✕</button>
-  </div>
 
-  <!-- Logo top-left -->
+
+  <!-- Logo top-center -->
   <div class="top-logo">
     <img src="Lemepile-logo-kebab.png" alt="L'EM PILÉ">
   </div>
