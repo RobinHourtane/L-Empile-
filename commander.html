@@ -540,7 +540,7 @@
     /* ---- VEGGIE COUNTER ---- */
     .veggie-counter-wrap {
       display: flex; align-items: center; gap: .65rem;
-      margin-bottom: .9rem;
+      margin-bottom: .5rem;
     }
     .veggie-counter-txt {
       font-family: var(--font-display); font-size: .8rem; font-weight: 700;
@@ -735,14 +735,34 @@
     .veggie-screen-content {
       overflow-y: auto; max-height: 100vh;
       position: relative; z-index: 10;
-      padding: 5rem 2.5rem 2.5rem;
+      padding: 4rem 2.5rem 1.2rem;
     }
-    .veggie-category { margin-bottom: 1.2rem; }
+    .veggie-screen-content .screen-title {
+      font-size: clamp(1.8rem, 5vw, 3.2rem);
+      margin-bottom: .25rem;
+    }
+    .veggie-screen-content .screen-sub { margin-bottom: .8rem; }
+    .veggie-category { margin-bottom: .7rem; }
     .veggie-cat-title {
       font-family: var(--font-display); font-size: .72rem; font-weight: 700;
       letter-spacing: .12em; text-transform: uppercase; color: rgba(255,255,255,.55);
-      margin-bottom: .5rem;
+      margin-bottom: .35rem;
     }
+    .veggie-screen-content .opt-thumb { width: 68px; height: 68px; }
+    .veggie-screen-content .opt-card {
+      padding: .6rem .9rem .6rem .6rem;
+      gap: .7rem;
+      min-width: 162px;
+    }
+    .veggie-screen-content .opt-name { font-size: 1.05rem; }
+    .veggie-screen-content .opt-desc { font-size: .76rem; }
+    .veggie-screen-content .sauce-thumb { width: 68px; height: 68px; }
+    .veggie-screen-content .sauce-card {
+      padding: .6rem .9rem .6rem .65rem;
+      gap: .7rem;
+    }
+    .veggie-screen-content .sauce-name { font-size: 1rem; }
+    .veggie-screen-content .sauce-flavor { font-size: .75rem; }
     .opts-row {
       display: flex; flex-wrap: nowrap; gap: .65rem;
       overflow-x: auto; padding-bottom: .4rem;
@@ -750,6 +770,7 @@
     .opts-row::-webkit-scrollbar { height: 3px; }
     .opts-row::-webkit-scrollbar-thumb { background: rgba(255,255,255,.2); border-radius: 2px; }
     .opts-row .opt-card { flex-shrink: 0; min-width: 148px; }
+    .opts-row .sauce-card { flex-shrink: 0; }
 
     /* ---- SUPPLEMENT CARD (smaller) ---- */
     .supp-card { min-width: 130px; }
@@ -967,7 +988,7 @@
     /* ---- MOBILE RESPONSIVE ---- */
     @media (max-width: 600px) {
       .screen-content { padding: 1.2rem 1rem 1.5rem; }
-      .veggie-screen-content { padding: 4.5rem 1rem 1.5rem; }
+      .veggie-screen-content { padding: 3.5rem 1rem 1rem; }
       .opts-grid, .sauce-grid { flex-wrap: nowrap; overflow-x: auto; padding-bottom: .5rem; }
       .opts-grid::-webkit-scrollbar { height: 3px; }
       .opts-grid::-webkit-scrollbar-thumb { background: rgba(255,255,255,.2); border-radius: 2px; }
@@ -1289,7 +1310,7 @@
         </div>
       </div>
 
-      <button class="continue-btn" onclick="continueStep(4)" style="margin-top:1rem">Continuer ›</button>
+      <button class="continue-btn" onclick="continueStep(4)" style="margin-top:.6rem">Continuer ›</button>
     </div>
   </section>
 
@@ -1299,39 +1320,28 @@
   <section class="builder-screen" data-step="5">
     <div class="bg-pattern" style="background-image:url('souses.png')"></div>
     <div class="bg-overlay"></div>
-    <div class="screen-content">
+    <div class="veggie-screen-content">
       <div class="step-label">Étape 5 / 9</div>
       <h1 class="screen-title">Tes<br>sauces</h1>
       <p class="screen-sub">Autant de sauces que tu veux</p>
-      <div class="spice-legend">
-        <span class="spice-legend-label">Piment :</span>
-        <span style="display:inline-flex;align-items:center;gap:.25rem">
-          <span class="spice-dot hot" style="width:9px;height:9px;border-radius:50%;background:#E74C3C;display:inline-block"></span>
-          <span class="spice-legend-label">Doux</span>
-        </span>
-        <span style="display:inline-flex;align-items:center;gap:.25rem">
-          <span class="spice-dot hot" style="width:9px;height:9px;border-radius:50%;background:#E74C3C;display:inline-block"></span>
-          <span class="spice-dot hot" style="width:9px;height:9px;border-radius:50%;background:#E74C3C;display:inline-block"></span>
-          <span class="spice-legend-label">Relevé</span>
-        </span>
-        <span style="display:inline-flex;align-items:center;gap:.25rem">
-          <span class="spice-dot hot" style="width:9px;height:9px;border-radius:50%;background:#E74C3C;display:inline-block"></span>
-          <span class="spice-dot hot" style="width:9px;height:9px;border-radius:50%;background:#E74C3C;display:inline-block"></span>
-          <span class="spice-dot hot" style="width:9px;height:9px;border-radius:50%;background:#E74C3C;display:inline-block"></span>
-          <span class="spice-legend-label">Fort</span>
-        </span>
-      </div>
-      <div class="sauce-section">
-        <div class="sauce-wheel"></div>
-        <div class="sauce-grid">
+
+      <!-- Douces -->
+      <div class="veggie-category">
+        <div class="veggie-cat-title" style="display:flex;align-items:center;gap:.5rem">
+          Douces
+          <span style="display:flex;gap:3px">
+            <span style="width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.2)"></span>
+            <span style="width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.2)"></span>
+            <span style="width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.2)"></span>
+          </span>
+        </div>
+        <div class="opts-row">
           <div class="sauce-card" onclick="toggleSauce(this,'Mayonnaise')">
             <img class="sauce-thumb" src="Sauses/Classic mayonnaise .png" alt="Mayonnaise">
             <div class="sauce-info">
               <div class="sauce-name">Mayonnaise</div>
               <div class="sauce-flavor">Crémeuse & douce</div>
-              <div class="spice-dots">
-                <div class="spice-dot"></div><div class="spice-dot"></div><div class="spice-dot"></div>
-              </div>
+              <div class="spice-dots"><div class="spice-dot"></div><div class="spice-dot"></div><div class="spice-dot"></div></div>
             </div>
           </div>
           <div class="sauce-card" onclick="toggleSauce(this,'Ketchup')">
@@ -1339,39 +1349,7 @@
             <div class="sauce-info">
               <div class="sauce-name">Ketchup</div>
               <div class="sauce-flavor">Tomate & légèrement sucrée</div>
-              <div class="spice-dots">
-                <div class="spice-dot"></div><div class="spice-dot"></div><div class="spice-dot"></div>
-              </div>
-            </div>
-          </div>
-          <div class="sauce-card" onclick="toggleSauce(this,'Harissa')">
-            <img class="sauce-thumb" src="Sauses/Red spicy harissa sauce.png" alt="Harissa">
-            <div class="sauce-info">
-              <div class="sauce-name">Harissa</div>
-              <div class="sauce-flavor">Piment & épices nordafricaines</div>
-              <div class="spice-dots">
-                <div class="spice-dot hot"></div><div class="spice-dot hot"></div><div class="spice-dot hot"></div>
-              </div>
-            </div>
-          </div>
-          <div class="sauce-card" onclick="toggleSauce(this,'Samurai')">
-            <img class="sauce-thumb" src="Sauses/Samurai sauce.png" alt="Samurai">
-            <div class="sauce-info">
-              <div class="sauce-name">Samurai</div>
-              <div class="sauce-flavor">Épicée & fumée, sauce culte</div>
-              <div class="spice-dots">
-                <div class="spice-dot hot"></div><div class="spice-dot hot"></div><div class="spice-dot"></div>
-              </div>
-            </div>
-          </div>
-          <div class="sauce-card" onclick="toggleSauce(this,'BBQ')">
-            <img class="sauce-thumb" src="Sauses/Dark BBQ sauce.png" alt="BBQ">
-            <div class="sauce-info">
-              <div class="sauce-name">BBQ</div>
-              <div class="sauce-flavor">Fumée & caramélisée, classique US</div>
-              <div class="spice-dots">
-                <div class="spice-dot hot"></div><div class="spice-dot"></div><div class="spice-dot"></div>
-              </div>
+              <div class="spice-dots"><div class="spice-dot"></div><div class="spice-dot"></div><div class="spice-dot"></div></div>
             </div>
           </div>
           <div class="sauce-card" onclick="toggleSauce(this,'Miel moutarde')">
@@ -1379,9 +1357,7 @@
             <div class="sauce-info">
               <div class="sauce-name">Miel moutarde</div>
               <div class="sauce-flavor">Sucré-acidulé, balance parfaite</div>
-              <div class="spice-dots">
-                <div class="spice-dot"></div><div class="spice-dot"></div><div class="spice-dot"></div>
-              </div>
+              <div class="spice-dots"><div class="spice-dot"></div><div class="spice-dot"></div><div class="spice-dot"></div></div>
             </div>
           </div>
           <div class="sauce-card" onclick="toggleSauce(this,'Tzatziki')">
@@ -1389,9 +1365,7 @@
             <div class="sauce-info">
               <div class="sauce-name">Tzatziki</div>
               <div class="sauce-flavor">Yaourt, concombre & menthe fraîche</div>
-              <div class="spice-dots">
-                <div class="spice-dot"></div><div class="spice-dot"></div><div class="spice-dot"></div>
-              </div>
+              <div class="spice-dots"><div class="spice-dot"></div><div class="spice-dot"></div><div class="spice-dot"></div></div>
             </div>
           </div>
           <div class="sauce-card" onclick="toggleSauce(this,'Sauce blanche')">
@@ -1399,14 +1373,65 @@
             <div class="sauce-info">
               <div class="sauce-name">Sauce blanche</div>
               <div class="sauce-flavor">Ail, crème & herbes du moment</div>
-              <div class="spice-dots">
-                <div class="spice-dot"></div><div class="spice-dot"></div><div class="spice-dot"></div>
-              </div>
+              <div class="spice-dots"><div class="spice-dot"></div><div class="spice-dot"></div><div class="spice-dot"></div></div>
             </div>
           </div>
         </div>
       </div>
-      <button class="continue-btn" onclick="continueStep(5)">Continuer ›</button>
+
+      <!-- Relevées -->
+      <div class="veggie-category">
+        <div class="veggie-cat-title" style="display:flex;align-items:center;gap:.5rem">
+          Relevées
+          <span style="display:flex;gap:3px">
+            <span style="width:7px;height:7px;border-radius:50%;background:#E74C3C"></span>
+            <span style="width:7px;height:7px;border-radius:50%;background:#E74C3C"></span>
+            <span style="width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.2)"></span>
+          </span>
+        </div>
+        <div class="opts-row">
+          <div class="sauce-card" onclick="toggleSauce(this,'BBQ')">
+            <img class="sauce-thumb" src="Sauses/Dark BBQ sauce.png" alt="BBQ">
+            <div class="sauce-info">
+              <div class="sauce-name">BBQ</div>
+              <div class="sauce-flavor">Fumée & caramélisée, classique US</div>
+              <div class="spice-dots"><div class="spice-dot hot"></div><div class="spice-dot"></div><div class="spice-dot"></div></div>
+            </div>
+          </div>
+          <div class="sauce-card" onclick="toggleSauce(this,'Samurai')">
+            <img class="sauce-thumb" src="Sauses/Samurai sauce.png" alt="Samurai">
+            <div class="sauce-info">
+              <div class="sauce-name">Samurai</div>
+              <div class="sauce-flavor">Épicée & fumée, sauce culte</div>
+              <div class="spice-dots"><div class="spice-dot hot"></div><div class="spice-dot hot"></div><div class="spice-dot"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pimentées -->
+      <div class="veggie-category">
+        <div class="veggie-cat-title" style="display:flex;align-items:center;gap:.5rem">
+          Pimentées
+          <span style="display:flex;gap:3px">
+            <span style="width:7px;height:7px;border-radius:50%;background:#E74C3C"></span>
+            <span style="width:7px;height:7px;border-radius:50%;background:#E74C3C"></span>
+            <span style="width:7px;height:7px;border-radius:50%;background:#E74C3C"></span>
+          </span>
+        </div>
+        <div class="opts-row">
+          <div class="sauce-card" onclick="toggleSauce(this,'Harissa')">
+            <img class="sauce-thumb" src="Sauses/Red spicy harissa sauce.png" alt="Harissa">
+            <div class="sauce-info">
+              <div class="sauce-name">Harissa</div>
+              <div class="sauce-flavor">Piment & épices nordafricaines</div>
+              <div class="spice-dots"><div class="spice-dot hot"></div><div class="spice-dot hot"></div><div class="spice-dot hot"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <button class="continue-btn" onclick="continueStep(5)" style="margin-top:.6rem">Continuer ›</button>
     </div>
   </section>
 
